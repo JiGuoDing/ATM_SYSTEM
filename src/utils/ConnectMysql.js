@@ -64,6 +64,34 @@ app.post('/login', (req, res) => {
     })
 })
 
+// 管理员添加用户
+app.post('/addUser', (req, res) => {
+    const data = req.body
+    const checkExistence = 'select * from account where id = ?'
+    pool.query(checkExistence, [data.id], (error, result) => {
+        if (error) { // 查询数据库失败
+            console.error('error occured when quering')
+            res.status(500).json({ error: '数据库查询失败' })
+        } else { // 查询数据库成功
+            if (result.length > 0) { // 该用户已存在
+                console.error('该身份证号已创建帐号')
+                res.status(500).json({ error: '该身份证已创建帐号' })
+            } else { // 可以创建账户
+                const addUser = 'insert into account set ?'
+                pool.query(addUser, data, (error, result) => {
+                    if (error || data.name.length === 0 || data.password.length === 0 || data.id.length !== 18) { // 创建账户失败
+                        console.log('error occurs!', error)
+                        res.status(500).json({ error: '用户添加失败' })
+                    } else { // 创建账户成功
+                        console.log('data inserted successfully', result)
+                        res.status(200).json({ message: '用户添加成功', result })
+                    }
+                })
+            }
+        }
+    })
+})
+
 // 释放数据库连接
 app.get('/releaseConnexion', () => {
     if (conn) {
