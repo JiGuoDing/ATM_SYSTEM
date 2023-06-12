@@ -2,34 +2,75 @@
     <div class="withdraw-component">
         <h3>取款</h3>
         <label for="withdraw-amount">取款金额:</label>
-        <input v-model="amount" type="number" id="withdraw-amount" placeholder="请输入取款金额" />
+        <div>
+            <input type="radio" id="option-500" value="500" v-model="selectedAmount">
+            <label for="option-500">500元</label>
+        </div>
+        <div>
+            <input type="radio" id="option-1000" value="1000" v-model="selectedAmount">
+            <label for="option-1000">1000元</label>
+        </div>
+        <div>
+            <input type="radio" id="option-1500" value="1500" v-model="selectedAmount">
+            <label for="option-1500">1500元</label>
+        </div>
+        <div>
+            <input type="radio" id="option-custom" value="custom" v-model="selectedAmount">
+            <label for="option-custom">其他金额</label>
+            <input v-if="selectedAmount === 'custom'" v-model.number="customAmount" type="number"
+                id="withdraw-custom-amount" placeholder="请输入取款金额">
+        </div>
         <button @click="confirmWithdraw">确认</button>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: 'WithdrawComponent',
     data() {
         return {
-            amount: null,
+            selectedAmount: '1000',
+            customAmount: null
         };
     },
     methods: {
         confirmWithdraw() {
-            if (!this.amount) {
-                alert('请输入取款金额');
-                return;
+            let amount;
+            if (this.selectedAmount === 'custom') {
+                amount = this.customAmount;
+            } else {
+                amount = this.selectedAmount;
             }
-            // 在这里执行取款操作，可以将取款金额发送给后端进行处理
-            alert(`成功取款 ${this.amount} 元`);
+
+            if (amount <= 0)
+                alert('取款数额需大于0')
+            else {
+                const data = {
+                    id: this.$store.state.currentUser.id,
+                    amount: amount
+                }
+                axios.post('http://localhost:11001/Withdraw', data)
+                    .then(response => {
+                        console.log(response)
+                        alert(`取款${amount}元成功`)
+                        const newDayLimit = response.data.newDayLimit
+                        const newBalance = response.data.newBalance
+                        this.$store.dispatch('refreshBalance', newBalance)
+                        this.$store.dispatch('refreshDayLimit', newDayLimit)
+                    }).catch(error => {
+                        console.error('取款失败: ', error)
+                        alert(error.response.data.error)
+                    })
+            }
+
             // 取款操作完成后，可以关闭弹窗或执行其他操作
             this.closeWithdrawPopup();
         },
         closeWithdrawPopup() {
             this.$emit('close');
-        },
-    },
+        }
+    }
 };
 </script>
 
@@ -49,11 +90,15 @@ export default {
     margin-bottom: 5px;
 }
 
-.withdraw-component input {
+.withdraw-component input[type="radio"] {
+    margin-right: 5px;
+}
+
+.withdraw-component input[type="number"] {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-bottom: 10px;
+    margin-top: 5px;
 }
 
 .withdraw-component button {

@@ -3,32 +3,49 @@
         <h3>转账</h3>
         <label for="transfer-amount">转账金额:</label>
         <input v-model="amount" type="number" id="transfer-amount" placeholder="请输入转账金额" />
-        <label for="transfer-account">收款账号:</label>
-        <input v-model="account" type="text" id="transfer-account" placeholder="请输入收款账号" />
+        <label for="transfer-id">收款账号:</label>
+        <input v-model="id" type="text" id="transfer-id" placeholder="请输入收款账号" />
         <button @click="confirmTransfer">确认</button>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'TransferComponent',
     data() {
         return {
             amount: null,
-            account: null,
+            id: null,
         };
     },
     methods: {
         confirmTransfer() {
-            if (!this.amount || !this.account) {
-                alert('请输入转账金额和收款账号');
-                return;
+            if (isNaN(this.amount)) {
+                alert('请输入数字!')
+                this.amount = 0
+                this.id = 0
+            } else {
+                const data = {
+                    op_id: this.$store.state.currentUser.id,
+                    aim_id: this.id,
+                    amount: this.amount
+                }
+                console.log(data)
+
+                axios.post('http://localhost:11001/Transfer', data)
+                    .then(response => {
+                        alert(`转账${this.amount}元成功!`)
+                        const newBalance = response.data.newBalance
+                        this.$store.dispatch('refreshBalance', newBalance)
+                    }).catch(error => {
+                        alert('转账失败!')
+                        console.error('error occurred: ', error)
+                    })
             }
-            // 在这里执行转账操作，可以将转账金额和收款账号发送给后端进行处理
-            alert(`成功向账号 ${this.account} 转账 ${this.amount} 元`);
-            // 转账操作完成后，可以关闭弹窗或执行其他操作
-            this.closeTransferPopup();
         },
+
         closeTransferPopup() {
             this.$emit('close');
         },

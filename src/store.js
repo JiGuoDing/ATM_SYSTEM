@@ -14,6 +14,10 @@ const store = createStore({
 
         setCurrentUserBalance(state, balance) {
             state.currentUser.balance = balance
+        },
+
+        setCurrentUserDayLimit(state, DayLimit) {
+            state.currentUser.day_limit = DayLimit
         }
     },
     actions: {
@@ -25,6 +29,10 @@ const store = createStore({
         refreshBalance({ commit }, balance) {
             // 余额刷新后将新余额存入state.currentUser中
             commit('setCurrentUserBalance', balance)
+        },
+
+        refreshDayLimit({ commit }, DayLimit) {
+            commit('setCurrentUserDayLimit', DayLimit)
         }
     },
 });
