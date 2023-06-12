@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "node src/utils/ConnectMysql.js & vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -11,6 +11,7 @@
     "ajax": "^0.0.4",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "cors": "^2.8.5",
     "mysql": "^2.18.1",
     "vue": "^3.2.13",
     "vue-router": "^4.2.2"

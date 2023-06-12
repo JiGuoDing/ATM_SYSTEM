@@ -10,7 +10,10 @@
 </template>
 
 <script>
-
+export default {
+    name: 'SignUpComponent',
+    components: {},
+}
 </script>
 
 <style></style>

@@ -9,7 +9,7 @@
         </div>
         <div id="btn">
             <button id="lgn" @click="lgn">登录</button>
-            <button id="sgu">注册</button>
+            <button id="sgu" @click="sgu">注册</button>
         </div>
     </div>
 </template>
@@ -26,6 +26,9 @@ export default {
         }
 
     },
+    beforeUnmount() {
+        this.releaseConnxion()
+    },
     methods: {
         lgn() {
             //向数据库查询用户输入的信息
@@ -34,15 +37,25 @@ export default {
                 password: this.password
             }
 
-            axios.post('http://loaclhost:11001', LoginData)
+            axios.post('http://localhost:11001/login', LoginData)
                 .then((response) => {
                     //TODO 登录成功
                     console.log('登录成功', response)
+
                 }).catch((error) => {
                     //登录失败
                     console.log('登陆失败: ', error)
                 })
+        },
+
+        sgu() {
+            this.$router.push('/SignUp')
+        },
+
+        releaseConnxion() {
+            axios.post('http://localhost:11001/releaseConnexion')
         }
+
     }
 }
 </script>
