@@ -42,6 +42,7 @@ app.post('/login', (req, res) => {
         } else {
             if (result0.length <= 0) {
                 console.log('该账户不存在')
+                res.status(500).json({ error: '用户不存在' })
             } else {
                 const queryAccountAccuracy = "select * from account where id = ? and password = ?"
                 pool.query(queryAccountAccuracy, [data.id, data.password], (error, result1) => {
@@ -49,12 +50,12 @@ app.post('/login', (req, res) => {
                         console.error('DB query error!', error)
                     } else {
                         if (result1.length > 0) {
-                            const user = result1[0];
-                            res.status(200).json({ message: '登录成功', user });
+                            const user = result1[0]
+                            res.status(200).json({ message: '登录成功', user })
                             console.log('登录成功 :)')
                         } else {
                             console.log('密码错误 :(')
-                            res.status(401).json({ error: '密码错误' });
+                            res.status(500).json({ error: '密码错误' })
                         }
                     }
                 })

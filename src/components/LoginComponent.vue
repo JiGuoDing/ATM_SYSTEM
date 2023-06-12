@@ -39,15 +39,18 @@ export default {
 
             axios.post('http://localhost:11001/login', LoginData)
                 .then((response) => {
-                    //TODO 登录成功
                     const user = response.data.user
+                    console.log(user.account_type)
                     if (user.account_type === 'admin')
                         this.$router.push('/AdminManage')
                     else
                         this.$router.push('/ServiceView')
                 }).catch((error) => {
-                    //登录失败
-                    console.log('登陆失败: ', error)
+                    console.log(error.response.data.error)
+                    if (error.response.data.error === '密码错误')
+                        alert('密码错误')
+                    else if (error.response.data.error === '用户不存在')
+                        alert('用户名不存在')
                 })
         },
 
