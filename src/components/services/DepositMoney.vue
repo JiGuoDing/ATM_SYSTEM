@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: 'DepositComponent',
     data() {
@@ -17,12 +18,27 @@ export default {
     },
     methods: {
         confirmDeposit() {
-            if (!this.amount) {
-                alert('请输入存款金额');
+            if (this.amount <= 0) {
+                alert('存款数额需大于0元');
                 return;
+            } else {
+                const data = {
+                    id: this.$store.state.currentUser.id,
+                    amount: this.amount,
+                }
+                console.log(data)
+                axios.post('http://localhost:11001/Deposit', data)
+                    .then((response) => {
+                        // 存款成功且操作被记录
+                        alert(response.data.message)
+                        const newBalance = this.$store.state.currentUser.balance + this.amount
+                        this.$store.dispatch('refreshBalance', newBalance)
+                    }).catch(error => {
+                        console.error('存款失败', error)
+                    })
             }
             // 在这里执行存款操作，可以将存款金额发送给后端进行处理
-            alert(`成功存款 ${this.amount} 元`);
+
             // 存款操作完成后，可以关闭弹窗或执行其他操作
             this.closeDepositPopup();
         },

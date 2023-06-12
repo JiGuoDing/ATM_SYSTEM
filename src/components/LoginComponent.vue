@@ -40,6 +40,8 @@ export default {
             axios.post('http://localhost:11001/login', LoginData)
                 .then((response) => {
                     const user = response.data.user
+                    console.log(user)
+                    this.$store.dispatch('login', user)
                     console.log(user.account_type)
                     if (user.account_type === 'admin')
                         this.$router.push('/AdminManage')

@@ -1,24 +1,26 @@
 <template>
     <div id="ServiceBox">
+        <div class="ItemBox">
+            <div class="serviceItem" @click="selectedService = 'balance'">
+                <h2>余额查询</h2>
+            </div>
+            <div class="serviceItem" @click="selectedService = 'deposit'">
+                <h2>存款</h2>
+            </div>
+            <div class="serviceItem" @click="selectedService = 'withdraw'">
+                <h2>取款</h2>
+            </div>
+            <div class="serviceItem" @click="selectedService = 'transfer'">
+                <h2>转账</h2>
+            </div>
+            <div class="serviceItem" @click="selectedService = 'updatePassword'">
+                <h2>修改密码</h2>
+            </div>
+        </div>
+
         <div class="serviceComponent">
             <!-- 使用动态组件根据选中的服务项渲染相应的组件 -->
             <component :is="selectedServiceComponent"></component>
-        </div>
-
-        <div class="serviceItem" @click="selectedService = 'balance'">
-            <h2>余额查询</h2>
-        </div>
-        <div class="serviceItem" @click="selectedService = 'deposit'">
-            <h2>存款</h2>
-        </div>
-        <div class="serviceItem" @click="selectedService = 'withdraw'">
-            <h2>取款</h2>
-        </div>
-        <div class="serviceItem" @click="selectedService = 'transfer'">
-            <h2>转账</h2>
-        </div>
-        <div class="serviceItem" @click="selectedService = 'updatePassword'">
-            <h2>修改密码</h2>
         </div>
     </div>
 </template>
@@ -62,10 +64,17 @@ export default {
 <style>
 #ServiceBox {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
+}
+
+.ItemBox {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: auto;
+    padding: 20px;
 }
 
 .serviceItem {
@@ -95,6 +104,8 @@ export default {
 }
 
 .serviceComponent {
-    margin-top: 40px;
+    flex: 7;
+    padding: 20px;
+    overflow: auto;
 }
 </style>

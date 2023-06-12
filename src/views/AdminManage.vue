@@ -72,22 +72,24 @@ export default {
                 password: this.password,
                 email: this.email,
             }
-
-            console.log(userData)
-
-            axios.post('http://localhost:11001/addUser', userData)
-                .then(response => {
-                    console.log(response)
-                    alert('账户创建成功')
-                }).catch(error => {
-                    console.log(error)
-                    if (error.response.data.error === '该身份证已创建帐号')
-                        alert('该身份证已创建账户')
-                    else if (error.response.data.error === '数据库查询失败')
-                        alert('数据库查询失败')
-                    else if (error.response.data.error === '用户添加失败')
-                        alert('您输入了不正确的数据')
-                })
+            if (userData.balance < 0)
+                alert('余额不能为负数')
+            else {
+                axios.post('http://localhost:11001/addUser', userData)
+                    .then(response => {
+                        console.log(response)
+                        alert('账户创建成功')
+                    }).catch(error => {
+                        console.log(this.$store.state.currentUser.id)
+                        console.log(error)
+                        if (error.response.data.error === '该身份证已创建帐号')
+                            alert('该身份证已创建账户')
+                        else if (error.response.data.error === '数据库查询失败')
+                            alert('数据库查询失败')
+                        else if (error.response.data.error === '用户添加失败')
+                            alert('您输入了不正确的数据')
+                    })
+            }
         }
     }
 }

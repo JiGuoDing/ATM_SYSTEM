@@ -79,7 +79,7 @@ app.post('/addUser', (req, res) => {
             } else { // 可以创建账户
                 const addUser = 'insert into account set ?'
                 pool.query(addUser, data, (error, result) => {
-                    if (error || data.name.length === 0 || data.password.length === 0 || data.id.length !== 18) { // 创建账户失败
+                    if (error || data.name.length === 0 || data.password.length === 0 || data.id.length !== 18 || data.balance < 0) { // 创建账户失败
                         console.log('error occurs!', error)
                         res.status(500).json({ error: '用户添加失败' })
                     } else { // 创建账户成功
@@ -88,6 +88,48 @@ app.post('/addUser', (req, res) => {
                     }
                 })
             }
+        }
+    })
+})
+
+app.post('/refreshBalance', (req, res) => {
+    const data = req.body
+    const queryBalance = 'select balance from account where id = ?'
+    pool.query(queryBalance, [data.id], (error, result) => {
+        if (error) {
+            // 查询数据库失败
+            res.status(500).json({ error: '查询数据库失败' })
+            console.log(error)
+        } else {
+            console.log(result)
+            const result0 = result[0]
+            res.status(200).json({ message: '刷新成功', result0 })
+        }
+    })
+})
+
+app.post('/Deposit', (req, res) => {
+    const data = req.body
+    const id = data.id, amount = data.amount
+    const executeDeposit = 'update account set balance = balance + ? where id = ?'
+    pool.query(executeDeposit, [amount, id], (error, result) => {
+        if (error) {
+            console.error('查询账户数据库失败: ', error)
+            res.status(500).json({ error: '查询账户数据库失败' })
+        } else {
+            console.log('存款成功')
+            console.log(result)
+            const addRcd = 'insert into op_rcd (op_user_id, op_type, op_amount) values(?, ?, ?)'
+            pool.query(addRcd, [id, '存款', amount], (error, result) => {
+                if (error) {
+                    console.error('查询记录数据库失败', error)
+                    res.status(500).json({ error: '查询记录数据库失败' })
+                } else {
+                    console.log('存款及操作记录成功')
+                    console.log(result)
+                    res.status(200).json({ message: '存款及操作记录成功' })
+                }
+            })
         }
     })
 })

@@ -7,19 +7,28 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: 'BalanceComponent',
     data() {
         return {
-            balance: 0,
+            balance: this.$store.state.currentUser.balance,
         };
     },
     methods: {
         refreshBalance() {
-            // 模拟异步请求获取最新余额
-            setTimeout(() => {
-                this.balance = Math.floor(Math.random() * 1000); // 随机生成一个余额值
-            }, 1000);
+            const user = this.$store.state.currentUser
+            // 获取最新的余额
+            axios.post('http://localhost:11001/refreshBalance', user)
+                .then(response => {
+                    console.log(response)
+                    const newBalance = response.data.result0.balance
+                    this.balance = newBalance
+                    this.$store.dispatch('refreshBalance', newBalance)
+                }).catch(error => {
+                    console.error('error occured when refreshing: ', error.response.data.error)
+                    alert('刷新失败')
+                })
         },
     },
 };
