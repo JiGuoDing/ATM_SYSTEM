@@ -8,7 +8,6 @@ const routes = [
         path: '/Login',
         name: 'Login',
         component: LoginComponent
-
     },
 
     // 注册界面
