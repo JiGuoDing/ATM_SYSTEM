@@ -26,9 +26,9 @@ export default {
         }
 
     },
-    beforeUnmount() {
-        this.releaseConnxion()
-    },
+    // beforeUnmount() {
+    //     this.releaseConnxion()
+    // },
     methods: {
         lgn() {
             //向数据库查询用户输入的信息
@@ -40,8 +40,11 @@ export default {
             axios.post('http://localhost:11001/login', LoginData)
                 .then((response) => {
                     //TODO 登录成功
-                    console.log('登录成功', response)
-
+                    const user = response.data.user
+                    if (user.account_type === 'admin')
+                        this.$router.push('/AdminManage')
+                    else
+                        this.$router.push('/ServiceView')
                 }).catch((error) => {
                     //登录失败
                     console.log('登陆失败: ', error)
