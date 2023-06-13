@@ -365,6 +365,116 @@ app.post('/UpdatePsd', (req, res) => {
 })
 
 
+//修改用户信息
+app.post('/UpdateUser', (req, res) => {
+    const userData = req.body
+})
+
+// 查询用户信息
+app.post('/QueryUser', (req, res) => {
+    const userData = req.body
+    const id = userData.id, op_id = userData.op_id
+    const checkExistence = 'select * from account where id = ?'
+    pool.query(checkExistence, [id], (error, result) => {
+        if (error) {
+            console.error('数据库处理失败', error)
+            res.status(500).json({ error: '数据库处理失败' })
+        } else {
+            if (result.length <= 0) {
+                // 未找到该条记录
+                console.error('该用户不存在')
+                res.status(404).json({ error: '该用户不存在' })
+            } else {
+                // 找到了该条记录
+                console.log('该用户存在')
+                // 记录查询操作
+                const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
+                pool.query(addRcd, [op_id, id, '查询账户'], (error) => {
+                    if (error) {
+                        // 操作记录失败
+                        console.error('记录操作失败', error)
+                        res.status(500).json({ error: '记录操作时数据库处理失败' })
+                    } else {
+                        // 操作记录成功
+                        console.log('操作记录成功')
+                        const result0 = result[0]
+                        if (result0.account_type === 'admin')
+                            result0.id += '(管理员账户)'
+                        else
+                            result0.id += '(普通账户)'
+                        // 查询任务成功
+                        console.log('用户信息: ', result0)
+                        console.log('查询账户成功，操作已被记录')
+                        res.status(200).json({ message: '账户查询完成', UserData: result0 })
+                    }
+                })
+
+
+            }
+        }
+    })
+})
+
+// 删除用户
+app.post('/DropUser', (req, res) => {
+    const userData = req.body
+    const id = userData.id, op_id = userData.op_id
+    const checkAccountType = 'select account_type from account where id = ?'
+    pool.query(checkAccountType, [id], (error, result) => {
+        if (error) {
+            // 数据库查询失败
+            console.error('查询数据库失败')
+            res.status(500).json({ error: '查询数据库失败' })
+        } else {
+            // 数据库查询成功
+            if (result.length <= 0) {
+                // 账户不存在
+                res.status(500).json({ error: '该账户不存在' })
+            } else {
+                // 账户存在
+                const result0 = result[0]
+                if (result0.account_type === 'admin') {
+                    // 要删除的是管理员账户
+                    console.error('您不能删除管理员账户')
+                    res.status(500).json({ error: '您不能删除管理员账户' })
+                } else {
+                    // 要删除的账户非管理员
+                    const dropUser = 'delete from account where id = ?'
+                    pool.query(dropUser, [id], (error, result) => {
+                        if (error) {
+                            // 数据库查询失败
+                            console.error('查询数据库失败')
+                            res.status(500).json({ error: '查询数据库失败' })
+                        } else {
+                            // 数据库查询成功
+                            if (result.affectRows <= 0) {
+                                // 没有该条记录
+                                console.error('删除用户失败, 该用户不存在: ', error)
+                                res.status(500).json({ error: '用户不存在' })
+                            } else {
+                                // 有该条记录并进行删除
+                                // 进行操作记录
+                                const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
+                                pool.query(addRcd, [op_id, '删除账户', id], (error) => {
+                                    if (error) {
+                                        console.error('记录操作失败', error)
+                                        res.status(500).json({ error: '记录操作时数据库处理失败' })
+                                    } else {
+                                        // 记录操作成功
+                                        console.log('删除用户成功，操作已被记录')
+                                        res.status(200).json({ message: '删除用户成功，操作已被记录' })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+        }
+    })
+})
+
+
 // 释放数据库连接
 app.get('/releaseConnexion', () => {
     if (conn) {
