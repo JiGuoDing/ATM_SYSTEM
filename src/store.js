@@ -18,6 +18,10 @@ const store = createStore({
 
         setCurrentUserDayLimit(state, DayLimit) {
             state.currentUser.day_limit = DayLimit
+        },
+
+        setCurrentUserPsd(state, Password) {
+            state.currentUser.password = Password
         }
     },
     actions: {
@@ -33,6 +37,10 @@ const store = createStore({
 
         refreshDayLimit({ commit }, DayLimit) {
             commit('setCurrentUserDayLimit', DayLimit)
+        },
+
+        updatePsd({ commit }, Password) {
+            commit('setCurrentUserPsd', Password)
         }
     },
 });

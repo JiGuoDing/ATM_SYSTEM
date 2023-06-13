@@ -38,7 +38,9 @@ export default {
                     .then(response => {
                         alert(`转账${this.amount}元成功!`)
                         const newBalance = response.data.newBalance
+                        const newDayLimit = response.data.newDayLimit
                         this.$store.dispatch('refreshBalance', newBalance)
+                        this.$store.dispatch('refreshDayLimit', newDayLimit)
                     }).catch(error => {
                         alert('转账失败!')
                         console.error('error occurred: ', error)

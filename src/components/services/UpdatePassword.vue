@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'UpdatePasswordComponent',
     data() {
@@ -24,17 +26,32 @@ export default {
     methods: {
         confirmUpdate() {
             if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
-                alert('请输入当前密码和新密码');
-                return;
-            }
-            if (this.newPassword !== this.confirmPassword) {
+                alert('请输入完整信息');
+            } else if (this.newPassword !== this.confirmPassword) {
                 alert('新密码和确认密码不一致');
-                return;
+            } else {
+                const data = {
+                    id: this.$store.state.currentUser.id,
+                    currentPassword: this.currentPassword,
+                    newPassword: this.newPassword,
+                }
+
+                axios.post('http://localhost:11001/UpdatePsd', data)
+                    .then(response => {
+                        alert(response.data.message)
+                        this.$store.dispatch('updatePsd', this.newPassword)
+                    }).catch(error => {
+                        console.error('error occurred: ', error)
+                        if (error.response.data.error === '当前密码输入错误')
+                            alert(error.response.data.error)
+                        else if (error.response.data.error === '检查当前密码是否正确时数据库查询失败')
+                            alert(error.response.data.error)
+                        else if (error.response.data.error === '修改密码时查询数据库失败')
+                            alert(error.response.data.error)
+                    })
+                this.closeUpdatePasswordPopup();
             }
-            // 在这里执行密码修改操作，可以将当前密码和新密码发送给后端进行处理
-            alert('密码修改成功');
-            // 密码修改完成后，可以关闭弹窗或执行其他操作
-            this.closeUpdatePasswordPopup();
+
         },
         closeUpdatePasswordPopup() {
             this.$emit('close');
@@ -47,6 +64,8 @@ export default {
 .update-password-component {
     padding: 10px;
     background-color: #f2f2f2;
+    display: flex;
+    flex-direction: column;
     border-radius: 8px;
 }
 

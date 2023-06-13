@@ -1,6 +1,6 @@
 const express = require('express')
 const mysql = require('mysql')
-const cors = require('cors')
+const cors = require('cors');
 
 // 创建Express应用
 const app = express()
@@ -213,54 +213,150 @@ app.post('/Transfer', (req, res) => {
                 res.status(500).json({ error: '目标账户不存在' })
             } else {
                 //目标用户存在
-                // 先查询转账方的钱
-                const queryBalance = 'select balance from account where id = ?'
-                pool.query(queryBalance, [op_id], (error, result) => {
+                // 先查询转账方日限额
+                const queryDayLimit = 'select day_limit from account where id = ?'
+                pool.query(queryDayLimit, [op_id], (error, result) => {
                     if (error) {
-                        console.error('余额查询失败', error)
-                        res.status(500).json({ error: '余额查询失败' })
+                        //查询日限额失败
+                        console.error('查询日限额失败')
+                        res.status(500).json({ error: '查询日限额失败' })
                     } else {
-                        console.log('余额查询成功')
-                        const balance = result[0].balance
-                        if (amount > balance) {
-                            res.status(500).json({ error: '余额不足' })
-                            console.error('余额不足: ', error)
+                        const day_limit = result[0].day_limit
+                        if (amount > day_limit) {
+                            // 日上限小于转账数额
+                            console.error('日上限不足')
+                            res.status(500).json({ error: '日上限不足' })
                         } else {
-                            // 余额足够
-                            const deductBalance = 'update account set balance = balance - ? where id = ?'
-                            pool.query(deductBalance, [amount, op_id], (error) => {
+                            // 日上限足够
+                            console.log('日上限足够，还剩￥', day_limit)
+                            // 再查询转账方的余额
+                            const queryBalance = 'select balance from account where id = ?'
+                            pool.query(queryBalance, [op_id], (error, result) => {
                                 if (error) {
-                                    console.error('出现了一些错误，但未扣除您的金额: ', error)
-                                    res.status(500).json({ error: '减钱失败' })
+                                    console.error('余额查询失败', error)
+                                    res.status(500).json({ error: '余额查询失败' })
                                 } else {
-                                    // 减钱成功
-                                    console.log('已扣除您账户的金额')
-                                    const newBalance = balance - amount
-                                    const addBalance = 'update account set balance = balance + ? where id = ?'
-                                    pool.query(addBalance, [amount, aim_id], (error, result) => {
-                                        if (error) {
-                                            console.error('查询数据库失败, 数据已回滚，您的金额已恢复: ', error)
-                                            res.status(500).json({ error: '查询数据库失败' })
-                                        } else {
-                                            // 加钱成功
-                                            console.log('金额已到对方账户')
-                                            const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type, op_amount) values(?, ?, ?, ?)'
-                                            pool.query(addRcd, [op_id, aim_id, '转账', amount], (error, result) => {
-                                                if (error) {
-                                                    console.error('查询数据库失败, 数据已回滚，您的金额已恢复')
-                                                    res.status(500).json({ error: '查询数据库失败' })
-                                                } else {
-                                                    // 添加操作记录成功
-                                                    console.log('添加操作记录成功')
-                                                    console.log('转账完成')
-                                                    res.status(200).json({ message: '转账成功', newBalance: newBalance })
-                                                }
-                                            })
-                                        }
-                                    })
+                                    console.log('余额查询成功')
+                                    const balance = result[0].balance
+                                    if (amount > balance) {
+                                        res.status(500).json({ error: '余额不足' })
+                                        console.error('余额不足: ', error)
+                                    } else {
+                                        // 余额足够
+                                        // 减金额和日上限
+                                        const deductBalance = 'update account set balance = balance - ?, day_limit = day_limit - ? where id = ?'
+                                        pool.query(deductBalance, [amount, amount, op_id], (error) => {
+                                            if (error) {
+                                                console.error('出现了一些错误，但未扣除您的金额: ', error)
+                                                res.status(500).json({ error: '减钱失败' })
+                                            } else {
+                                                // 减钱成功
+                                                console.log('已扣除您账户的金额并扣除了日上限')
+                                                const addBalance = 'update account set balance = balance + ? where id = ?'
+                                                pool.query(addBalance, [amount, aim_id], (error) => {
+                                                    if (error) {
+                                                        // 收款方收钱失败
+                                                        const rollbackBalance = 'update account set balance = balance + ? where id = ?'
+                                                        pool.query(rollbackBalance, [amount, op_id], (error) => {
+                                                            if (error) {
+                                                                console.error('出现严重错误，你的账户发生了问题!')
+                                                                const addBadRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type, op_amount) values(?, ?, ?, ?)'
+                                                                pool.query(addBadRcd, [op_id, aim_id, '异常操作(转账时)', amount], (error) => {
+                                                                    if (error) {
+                                                                        console.error('异常操作记录失败，请管理员及时查看日志！！！')
+                                                                        res.status(500).json({ error: '异常操作记录失败' })
+                                                                    } else {
+                                                                        console.log('异常操作记录成功，请管理员及时查看日志！！！')
+                                                                        res.status(500).json({ error: '存在异常操作，并已记录' })
+                                                                    }
+                                                                })
+                                                                res.status(500).json({ error: '严重错误' })
+                                                            } else {
+                                                                console.error('转账时发生了一些错误，您的金额已复原')
+                                                                res.status(500).json({ error: '转账时发生了一些错误，但不用担心，您的金额已恢复' })
+                                                            }
+                                                        })
+                                                    } else {
+                                                        // 加钱成功
+                                                        console.log('金额已到对方账户')
+                                                        const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type, op_amount) values(?, ?, ?, ?)'
+                                                        pool.query(addRcd, [op_id, aim_id, '转账', amount], (error) => {
+                                                            if (error) {
+                                                                // 添加转账记录失败
+                                                                const rollbackBalance = 'update account set balance = balance + ? where id = ?'
+                                                                pool.query(rollbackBalance, [amount, op_id], (error) => {
+                                                                    if (error) {
+                                                                        console.error('出现严重错误，你的账户发生了问题!')
+                                                                        const addBadRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type, op_amount) values(?, ?, ?, ?)'
+                                                                        pool.query(addBadRcd, [op_id, aim_id, '异常操作(添加转账记录时)', amount], (error) => {
+                                                                            if (error) {
+                                                                                console.error('异常操作记录失败，请管理员及时查看日志！！！')
+                                                                                res.status(500).json({ error: '异常操作记录失败' })
+                                                                            } else {
+                                                                                console.log('异常操作记录成功，请管理员及时查看日志！！！')
+                                                                                res.status(500).json({ error: '存在异常操作，并已记录' })
+                                                                            }
+                                                                        })
+                                                                        res.status(500).json({ error: '严重错误' })
+                                                                    } else {
+                                                                        console.error('添加转账记录时发生了一些错误，您的金额已复原')
+                                                                        res.status(500).json({ error: '添加转账记录时发生了一些错误，但不用担心，您的金额已恢复' })
+                                                                    }
+                                                                })
+                                                            } else {
+                                                                // 添加操作记录成功
+                                                                console.log('添加操作记录成功')
+                                                                console.log('转账完成')
+                                                                const newBalance = balance - amount
+                                                                const newDayLimit = day_limit - amount
+                                                                console.log('更新余额: ', newBalance)
+                                                                console.log('更新日上限: ', newDayLimit)
+                                                                res.status(200).json({ message: '转账成功', newBalance: newBalance, newDayLimit: newDayLimit })
+                                                            }
+                                                        })
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
                                 }
                             })
                         }
+                    }
+                })
+            }
+        }
+    })
+})
+
+// 修改密码
+app.post('/UpdatePsd', (req, res) => {
+    const data = req.body
+    const id = data.id, currentPassword = data.currentPassword, newPassword = data.newPassword
+
+    // 检查当前密码输入是否正确
+    const checkCurrentPsd = 'select * from account where id = ? and password = ?'
+    pool.query(checkCurrentPsd, [id, currentPassword], (error, result) => {
+        if (error) {
+            //数据库查询失败
+            console.error('检查当前密码是否正确时数据库查询失败: ', error)
+            res.status(500).json({ error: '检查当前密码是否正确时数据库查询失败' })
+        } else {
+            if (!result.length) {
+                // 查询到的数据为空，说明当前密码输入错误
+                console.error('当前密码输入错误')
+                res.status(500).json({ error: '当前密码输入错误' })
+            } else {
+                // 查询到了结果，说明当前密码输入无误
+                console.log('当前密码输入正确，进行密码修改...')
+                const UpdatePsd = 'update account set password = ? where id = ?'
+                pool.query(UpdatePsd, [newPassword, id], (error, result) => {
+                    if (error) {
+                        console.error('修改密码时查询数据库失败')
+                        res.status(500).json({ error: '修改密码时查询数据库失败' })
+                    } else {
+                        console.log('修改密码成功!')
+                        res.status(200).json({ message: '修改密码成功' })
                     }
                 })
             }
