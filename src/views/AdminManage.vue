@@ -29,6 +29,7 @@
                 <div class="inputContainer">
                     <label for="balance_l">余额:</label>
                     <input v-model="balance_l" type="number" id="balance_l" placeholder="请输入余额" />
+                    <input class="account_type" type="text" placeholder="单位:元" readonly />
                 </div>
 
                 <div class="inputContainer">
@@ -54,6 +55,7 @@
                 <div class="inputContainer">
                     <label for="id_r">身份证号:</label>
                     <input v-model="id_r" type="text" id="id_r" placeholder="请输入身份证号" />
+                    <input v-model="account_type" class="account_type" type="text" placeholder="账户身份" readonly />
                 </div>
 
                 <div class="inputContainer">
@@ -74,6 +76,7 @@
                 <div class="inputContainer">
                     <label for="balance_r">余额:</label>
                     <input v-model="balance_r" type="number" id="balance_r" placeholder="请输入余额" />
+                    <input class="account_type" type="text" placeholder="单位:元" readonly />
                 </div>
 
                 <div class="inputContainer">
@@ -88,7 +91,7 @@
             </div>
 
             <div class="btnBox">
-                <button class="btn" @click="update">修改</button>
+                <button v-if="updatePermission" class="btn" @click="update">修改</button>
                 <button class="btn" @click="query">查询</button>
                 <button class="btn" @click="drop">删除</button>
             </div>
@@ -119,6 +122,11 @@ export default {
             balance_r: null,
             password_r: null,
             email_r: null,
+
+            account_type: null,
+
+            // 用来判断修改按钮是否显现
+            updatePermission: false
         }
     },
     computed: {
@@ -153,8 +161,8 @@ export default {
     methods: {
         submit() {
             const userData = this.computeUser_l
-            if (userData.balance < 0)
-                alert('余额不能为负数')
+            if (userData.id === null || userData.name === null || userData.balance === null || userData.password === null)
+                alert('请输入完整的数据')
             else {
                 axios.post('http://localhost:11001/addUser', userData)
                     .then(response => {
@@ -163,12 +171,7 @@ export default {
                     }).catch(error => {
                         console.log(this.$store.state.currentUser.id)
                         console.log(error)
-                        if (error.response.data.error === '该身份证已创建帐号')
-                            alert('该身份证已创建账户')
-                        else if (error.response.data.error === '数据库查询失败')
-                            alert('数据库查询失败')
-                        else if (error.response.data.error === '用户添加失败')
-                            alert('您输入了不正确的数据')
+                        alert(error.response.data.error)
                     })
             }
         },
@@ -183,15 +186,20 @@ export default {
             axios.post('http://localhost:11001/QueryUser', userData)
                 .then(response => {
                     const data = response.data.UserData
-                    this.id_r = data.id,
-                        this.name_r = data.name,
-                        this.nickname_r = data.nickname,
-                        this.phone_number_r = data.phone_number,
-                        this.balance_r = data.balance,
-                        this.password_r = data.password,
-                        this.email_r = data.email
+                    this.id_r = data.id
+                    this.name_r = data.name
+                    this.nickname_r = data.nickname
+                    this.phone_number_r = data.phone_number
+                    this.balance_r = data.balance
+                    this.password_r = data.password
+                    this.email_r = data.email
+                    if (data.account_type === 'admin')
+                        this.account_type = '管理员'
+                    else
+                        this.account_type = '普通账户'
                     console.log('查询账户信息成功')
                     alert('查询账户信息成功')
+                    this.updatePermission = true
                 }).catch(error => {
                     console.error('查询账户信息失败: ', error.response.data.error)
                     alert('查询账户信息失败')
@@ -286,5 +294,14 @@ export default {
 
 .btnBox button {
     margin-left: 30px;
+}
+
+.account_type {
+    color: green;
+    text-align: center;
+    font-size: 10px;
+    margin-left: 10px;
+    width: 50px;
+    height: 8px;
 }
 </style>

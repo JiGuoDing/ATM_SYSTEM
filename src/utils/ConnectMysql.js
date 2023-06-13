@@ -48,6 +48,7 @@ app.post('/login', (req, res) => {
                 pool.query(queryAccountAccuracy, [data.id, data.password], (error, result1) => {
                     if (error) {
                         console.error('DB query error!', error)
+                        res.status(500).json({ error: '数据库查询失败' })
                     } else {
                         if (result1.length > 0) {
                             const user = result1[0]
@@ -67,6 +68,13 @@ app.post('/login', (req, res) => {
 // 管理员添加用户
 app.post('/addUser', (req, res) => {
     const data = req.body
+    const op_id = data.op_id
+    const userData = data
+    delete userData.op_id
+    console.log(typeof userData)
+    console.log(userData)
+    console.log(data)
+    // userData = JSON.parse(userData)
     const checkExistence = 'select * from account where id = ?'
     pool.query(checkExistence, [data.id], (error, result) => {
         if (error) { // 查询数据库失败
@@ -77,16 +85,54 @@ app.post('/addUser', (req, res) => {
                 console.error('该身份证号已创建帐号')
                 res.status(500).json({ error: '该身份证已创建帐号' })
             } else { // 可以创建账户
-                const addUser = 'insert into account set ?'
-                pool.query(addUser, data, (error, result) => {
-                    if (error || data.name.length === 0 || data.password.length === 0 || data.id.length !== 18 || data.balance < 0) { // 创建账户失败
-                        console.log('error occurs!', error)
-                        res.status(500).json({ error: '用户添加失败' })
-                    } else { // 创建账户成功
-                        console.log('data inserted successfully', result)
-                        res.status(200).json({ message: '用户添加成功', result })
-                    }
-                })
+                const addUser = 'insert into account (id, name, nickname, phone_number, balance, password, email, account_type) values (?)'
+
+                // 如果想在这里设置默认值
+                // if (data.nickname === null)
+                //     userData.nickname = 'default'
+                // if (data.phone_number === null)
+                //     userData.phone_number = -1
+                // if (data.email === null)
+                //     userData.email = 'default'
+
+                userData.account_type = 'regular'
+
+                if (data.id.length !== 18) {
+                    console.log('error occurs!', error)
+                    res.status(500).json({ error: '身份证号须为18位' })
+                } else if (data.name.length === 0) {
+                    console.log('error occurs!', error)
+                    res.status(500).json({ error: '姓名不能为空' })
+                } else if (data.balance < 0) {
+                    console.log('error occurs!', error)
+                    res.status(500).json({ error: '余额不能为负数' })
+                } else if (data.password.length === 0) {
+                    console.log('error occurs!', error)
+                    res.status(500).json({ error: '密码不能为空' })
+                } else {
+                    // 输入的数据都无误
+                    // 先进行操作记录
+                    const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
+                    pool.query(addRcd, [op_id, userData.id, '创建账户'], (error) => {
+                        if (error) {
+                            console.error('操作记录失败: ', error)
+                            res.status(500).json({ error: '操作记录失败' })
+                        } else {
+                            // 操作记录成功
+                            console.log('操作记录成功')
+                            pool.query(addUser, [Object.values(userData)], (error, result) => {
+                                if (error) { // 创建账户失败
+                                    console.log('error occurs!', error)
+                                    res.status(500).json({ error: '数据库添加账户失败，您忘记填写某些必须的数据或者数据不合法' })
+                                } else { // 创建账户成功
+                                    console.log('data inserted successfully', result)
+                                    res.status(200).json({ message: '账户创建成功', result })
+                                }
+                            })
+                        }
+                    })
+
+                }
             }
         }
     })
@@ -197,7 +243,7 @@ app.post('/Withdraw', (req, res) => {
     })
 })
 
-// 转账（要保证安全性，故使用Transaction）
+// 转账
 app.post('/Transfer', (req, res) => {
     const data = req.body
     const op_id = data.op_id, aim_id = data.aim_id, amount = data.amount
@@ -368,6 +414,25 @@ app.post('/UpdatePsd', (req, res) => {
 //修改用户信息
 app.post('/UpdateUser', (req, res) => {
     const userData = req.body
+    console.log(userData)
+    const checkExistence = 'select * from account where id = ?'
+    pool.query(checkExistence, [userData.id], (error, result) => {
+        if (error) {
+            // 数据库查询失败
+            console.error('数据库查询错误: ', error)
+            res.status(500).json({ error: '数据库查询错误' })
+        } else {
+            // 数据库查询成功
+            if (result.length <= 0) {
+                // 没有找到该条数据
+                console.error('该用户不存在')
+                res.status(500).json({ error: '该用户不存在' })
+            } else {
+                // 数据查询成功
+                console.log('已找到该用户记录，即将进行修改操作...')
+            }
+        }
+    })
 })
 
 // 查询用户信息
@@ -398,18 +463,12 @@ app.post('/QueryUser', (req, res) => {
                         // 操作记录成功
                         console.log('操作记录成功')
                         const result0 = result[0]
-                        if (result0.account_type === 'admin')
-                            result0.id += '(管理员账户)'
-                        else
-                            result0.id += '(普通账户)'
                         // 查询任务成功
                         console.log('用户信息: ', result0)
                         console.log('查询账户成功，操作已被记录')
                         res.status(200).json({ message: '账户查询完成', UserData: result0 })
                     }
                 })
-
-
             }
         }
     })
