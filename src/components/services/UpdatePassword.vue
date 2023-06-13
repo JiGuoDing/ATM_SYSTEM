@@ -66,6 +66,8 @@ export default {
     background-color: #f2f2f2;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-content: center;
     border-radius: 8px;
 }
 
@@ -74,11 +76,12 @@ export default {
 }
 
 .update-password-component label {
-    display: block;
+    display: flex;
     margin-bottom: 5px;
 }
 
 .update-password-component input {
+    width: 100px;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -92,5 +95,6 @@ export default {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    /* 光标为一只手*/
 }
 </style>

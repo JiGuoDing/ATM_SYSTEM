@@ -402,7 +402,16 @@ app.post('/UpdatePsd', (req, res) => {
                         res.status(500).json({ error: '修改密码时查询数据库失败' })
                     } else {
                         console.log('修改密码成功!')
-                        res.status(200).json({ message: '修改密码成功' })
+                        const addRcd = 'insert into op_rcd (op_user_id, op_type) values(?, ?)'
+                        pool.query(addRcd, [id, '普通账户修改密码'], (error) => {
+                            if (error) {
+                                console.error('修改密码操作记录失败: ', error)
+                                res.status(500).json({ error: '修改密码操作记录失败' })
+                            } else {
+                                console.log('修改密码操作记录成功')
+                                res.status(200).json({ message: '修改密码成功，该操作已被记录' })
+                            }
+                        })
                     }
                 })
             }
@@ -411,9 +420,11 @@ app.post('/UpdatePsd', (req, res) => {
 })
 
 
-//修改用户信息
+//修改账户信息
 app.post('/UpdateUser', (req, res) => {
     const userData = req.body
+    const op_id = userData.op_id
+    delete userData.op_id
     console.log(userData)
     const checkExistence = 'select * from account where id = ?'
     pool.query(checkExistence, [userData.id], (error, result) => {
@@ -426,10 +437,35 @@ app.post('/UpdateUser', (req, res) => {
             if (result.length <= 0) {
                 // 没有找到该条数据
                 console.error('该用户不存在')
-                res.status(500).json({ error: '该用户不存在' })
+                res.status(404).json({ error: '该用户不存在' })
             } else {
                 // 数据查询成功
                 console.log('已找到该用户记录，即将进行修改操作...')
+                const result0 = result[0]
+                if (result0.account_type === 'admin') {
+                    console.error('无法对管理员进行修改')
+                    res.status(500).json({ error: '无法对管理员进行修改' })
+                } else {
+                    const updateUser = 'update account set name = ?, nickname = ?, phone_number = ?, balance = ?, password = ?, email = ? where id = ?'
+                    pool.query(updateUser, [userData.name, userData.nickname, userData.phone_number, userData.balance, userData.password, userData.email, userData.id], (error) => {
+                        if (error) {
+                            console.error('修改数据库记录出错: ', error)
+                            res.status(500).json({ error: '向数据库修改数据出错' })
+                        } else {
+                            console.log('修改数据成功')
+                            const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
+                            pool.query(addRcd, [op_id, userData.id, '修改账户数据'], (error) => {
+                                if (error) {
+                                    console.error('操作记录出现错误: ', error)
+                                    res.status(500).json({ error: '操作记录出现错误' })
+                                } else {
+                                    console.log('修改账户信息操作记录成功')
+                                    res.status(200).json({ message: '修改账户信息成功' })
+                                }
+                            })
+                        }
+                    })
+                }
             }
         }
     })
@@ -514,7 +550,7 @@ app.post('/DropUser', (req, res) => {
                                 // 有该条记录并进行删除
                                 // 进行操作记录
                                 const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
-                                pool.query(addRcd, [op_id, '删除账户', id], (error) => {
+                                pool.query(addRcd, [op_id, id, '删除账户'], (error) => {
                                     if (error) {
                                         console.error('记录操作失败', error)
                                         res.status(500).json({ error: '记录操作时数据库处理失败' })

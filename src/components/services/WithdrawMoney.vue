@@ -1,6 +1,9 @@
 <template>
     <div class="withdraw-component">
         <h3>取款</h3>
+        <h2>
+            今日取款限额还剩:{{ this.$store.state.currentUser.day_limit }}元
+        </h2>
         <label for="withdraw-amount">取款金额:</label>
         <div>
             <input type="radio" id="option-500" value="500" v-model="selectedAmount">

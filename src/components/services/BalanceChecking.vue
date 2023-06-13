@@ -36,7 +36,6 @@ export default {
 
 <style scoped>
 .balance-component {
-    width: 300px;
     padding: 20px;
     background-color: #f2f2f2;
     border-radius: 8px;
@@ -52,13 +51,13 @@ export default {
 
 .balance-component p {
     font-size: 16px;
-    color: #666;
+    color: rebeccapurple;
     margin-bottom: 20px;
 }
 
 .balance-component button {
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: #4caf50;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -66,6 +65,6 @@ export default {
 }
 
 .balance-component button:hover {
-    background-color: #0056b3;
+    background-color: #4caf50;
 }
 </style>

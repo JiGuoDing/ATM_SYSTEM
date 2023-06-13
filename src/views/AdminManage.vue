@@ -46,6 +46,18 @@
             <button class="btn" @click="submit">提交</button>
         </div>
 
+        <div id="extensionBox">
+            <button id="showRecentRecord" class="btn">
+                显示最近的操作记录
+            </button>
+
+            <button id="refreshDayLimit" class="btn">
+                <p>
+                    刷新所有账户日上限
+                </p>
+            </button>
+        </div>
+
         <div id="ManageUserBox" class="adminPanel">
             <div class="adminHead">
                 管理用户信息
@@ -179,6 +191,14 @@ export default {
         update() {
             const userData = this.computeUser_r
             axios.post('http://localhost:11001/UpdateUser', userData)
+                .then(response => {
+                    console.log(response)
+                    alert(response.data.message)
+                    this.updatePermission = false
+                }).catch(error => {
+                    console.error('修改账户信息失败: ', error)
+                    alert(error.response.data.error)
+                })
         },
 
         query() {
@@ -226,15 +246,19 @@ export default {
 <style>
 .adminBox {
     display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
 }
 
 .adminPanel {
     flex: 1;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 50px;
 }
 
 .adminHead {
@@ -303,5 +327,20 @@ export default {
     margin-left: 10px;
     width: 50px;
     height: 8px;
+}
+
+#extensionBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#showRecentRecord {
+    margin-bottom: 20px;
+}
+
+#refreshDayLimit {
+    margin-top: 20px;
 }
 </style>
