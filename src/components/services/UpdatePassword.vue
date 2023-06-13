@@ -42,19 +42,9 @@ export default {
                         this.$store.dispatch('updatePsd', this.newPassword)
                     }).catch(error => {
                         console.error('error occurred: ', error)
-                        if (error.response.data.error === '当前密码输入错误')
-                            alert(error.response.data.error)
-                        else if (error.response.data.error === '检查当前密码是否正确时数据库查询失败')
-                            alert(error.response.data.error)
-                        else if (error.response.data.error === '修改密码时查询数据库失败')
-                            alert(error.response.data.error)
+                        alert(error.response.data.error)
                     })
-                this.closeUpdatePasswordPopup();
             }
-
-        },
-        closeUpdatePasswordPopup() {
-            this.$emit('close');
         },
     },
 };
@@ -64,7 +54,6 @@ export default {
 .update-password-component {
     padding: 10px;
     background-color: #f2f2f2;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-content: center;
@@ -76,7 +65,7 @@ export default {
 }
 
 .update-password-component label {
-    display: flex;
+    display: block;
     margin-bottom: 5px;
 }
 
@@ -89,9 +78,10 @@ export default {
 }
 
 .update-password-component button {
+    width: 50px;
     padding: 5px 10px;
     background-color: #4caf50;
-    color: #fff;
+    color: blanchedalmond;
     border: none;
     border-radius: 4px;
     cursor: pointer;

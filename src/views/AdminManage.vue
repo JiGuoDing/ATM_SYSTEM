@@ -51,7 +51,7 @@
                 显示最近的操作记录
             </button>
 
-            <button id="refreshDayLimit" class="btn">
+            <button id="refreshDayLimit" class="btn" @click="refreshDayLimit">
                 <p>
                     刷新所有账户日上限
                 </p>
@@ -238,7 +238,23 @@ export default {
                     console.error('删除用户失败，已退出删除进程: ', error)
                     alert(err)
                 })
-        }
+        },
+
+        refreshDayLimit() {
+            const userData = {
+                op_id: this.$store.state.currentUser.id
+            }
+            axios.post('http://localhost:11001/RefreshDayLimit', userData)
+                .then(response => {
+                    const message = response.data.message
+                    console.log('重置日额度成功')
+                    alert(message)
+                }).catch(error => {
+                    const err = error.response.data.error
+                    console.error('重置日额度失败: ', error)
+                    alert(err)
+                })
+        },
     }
 }
 </script>

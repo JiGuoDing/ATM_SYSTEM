@@ -569,6 +569,33 @@ app.post('/DropUser', (req, res) => {
     })
 })
 
+app.post('/RefreshDayLimit', (req, res) => {
+    const data = req.body
+    const op_id = data.op_id
+    const refreshDayLimit = 'update account set day_limit = 20000 where account_type = ?'
+    pool.query(refreshDayLimit, ['regular'], (error) => {
+        if (error) {
+            // 数据库处理失败
+            console.error('向数据库修改日上限失败: ', error)
+            res.status(500).json({ error: '向数据库修改日上限失败' })
+        } else {
+            // 数据库处理成功
+            console.log('已重置所有普通账户的日上限额度')
+            const addRcd = 'insert into op_rcd (op_user_id, op_type) values(?, ?)'
+            pool.query(addRcd, [op_id, '重置日额度'], (error) => {
+                if (error) {
+                    console.error('向数据库记录操作失败: ', error)
+                    res.status(500).json({ error: '向数据库记录操作失败' })
+                } else {
+                    console.log('重置日额度操作已记录成功')
+                    console.log('重置日额度完成')
+                    res.status(200).json({ message: '重置完成' })
+                }
+            })
+        }
+    })
+})
+
 
 // 释放数据库连接
 app.get('/releaseConnexion', () => {
