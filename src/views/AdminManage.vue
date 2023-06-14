@@ -185,55 +185,70 @@ export default {
         },
 
         update() {
-            const userData = this.computeUser_r
-            axios.post('http://localhost:11001/UpdateUser', userData)
-                .then(response => {
-                    console.log(response)
-                    alert(response.data.message)
-                    this.updatePermission = false
-                }).catch(error => {
-                    console.error('修改账户信息失败: ', error)
-                    alert(error.response.data.error)
-                })
+            if (this.id_r === null) {
+                alert('请输入用户的身份证号')
+            } else {
+                const userData = this.computeUser_r
+                axios.post('http://localhost:11001/UpdateUser', userData)
+                    .then(response => {
+                        console.log(response)
+                        alert(response.data.message)
+                        this.updatePermission = false
+                    }).catch(error => {
+                        console.error('修改账户信息失败: ', error)
+                        alert(error.response.data.error)
+                    })
+            }
+
         },
 
         query() {
-            const userData = this.computeUser_r
-            axios.post('http://localhost:11001/QueryUser', userData)
-                .then(response => {
-                    const data = response.data.UserData
-                    this.id_r = data.id
-                    this.name_r = data.name
-                    this.nickname_r = data.nickname
-                    this.phone_number_r = data.phone_number
-                    this.balance_r = data.balance
-                    this.password_r = data.password
-                    this.email_r = data.email
-                    if (data.account_type === 'admin')
-                        this.account_type = '管理员'
-                    else
-                        this.account_type = '普通账户'
-                    console.log('查询账户信息成功')
-                    alert('查询账户信息成功')
-                    this.updatePermission = true
-                }).catch(error => {
-                    console.error('查询账户信息失败: ', error.response.data.error)
-                    alert(error.response.data.error)
-                })
+            if (this.id_r === null) {
+                alert('请输入用户的身份证号')
+            } else {
+                const userData = this.computeUser_r
+                axios.post('http://localhost:11001/QueryUser', userData)
+                    .then(response => {
+                        const data = response.data.UserData
+                        this.id_r = data.id
+                        this.name_r = data.name
+                        this.nickname_r = data.nickname
+                        this.phone_number_r = data.phone_number
+                        this.balance_r = data.balance
+                        this.password_r = data.password
+                        this.email_r = data.email
+                        if (data.account_type === 'admin')
+                            this.account_type = '管理员'
+                        else
+                            this.account_type = '普通账户'
+                        console.log('查询账户信息成功')
+                        alert('查询账户信息成功')
+                        this.updatePermission = true
+                    }).catch(error => {
+                        console.error('查询账户信息失败: ', error.response.data.error)
+                        alert(error.response.data.error)
+                    })
+            }
+
         },
 
         drop() {
-            const userData = this.computeUser_r
-            axios.post('http://localhost:11001/DropUser', userData)
-                .then(response => {
-                    const message = response.data.message
-                    console.log('删除用户成功，已退出删除进程')
-                    alert(message)
-                }).catch(error => {
-                    const err = error.response.data.error
-                    console.error('删除用户失败，已退出删除进程: ', error)
-                    alert(err)
-                })
+            if (this.id_r === null) {
+                alert('请输入用户的身份证号')
+            } else {
+                const userData = this.computeUser_r
+                axios.post('http://localhost:11001/DropUser', userData)
+                    .then(response => {
+                        const message = response.data.message
+                        console.log('删除用户成功，已退出删除进程')
+                        alert(message)
+                    }).catch(error => {
+                        const err = error.response.data.error
+                        console.error('删除用户失败，已退出删除进程: ', error)
+                        alert(err)
+                    })
+            }
+
         },
 
         refreshDayLimit() {
@@ -313,9 +328,9 @@ export default {
 .inputContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin-bottom: 10px;
-    width: 30vh;
+    width: 40vh;
 }
 
 .inputContainer label {
@@ -352,7 +367,7 @@ export default {
     align-items: center;
     justify-content: center;
     border: solid 2px green;
-    height: 100vh;
+    height: 80vh;
 }
 
 #showRecentRecord {
@@ -370,6 +385,7 @@ export default {
 
 #extensionBox p {
     width: 100%;
+    color: blue;
     background-color: gray;
 }
 
