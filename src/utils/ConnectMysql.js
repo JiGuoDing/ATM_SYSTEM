@@ -629,10 +629,10 @@ app.post('/FetchRecords', (req, res) => {
     })
 })
 
-// 获取所有账户
+// 获取所有普通账户
 app.post('/FetchUsers', (req, res) => {
-    const fetchUsers = 'select * from account'
-    pool.query(fetchUsers, [], (error, result) => {
+    const fetchUsers = 'select * from account where account_type = ?'
+    pool.query(fetchUsers, ['regular'], (error, result) => {
         if (error) {
             console.error('从数据库获取用户失败', error)
             res.status(500).json({ error: '从数据库获取用户失败' })

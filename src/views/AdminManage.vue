@@ -373,7 +373,8 @@ export default {
     justify-content: center;
     border: solid 2px green;
     height: 80vh;
-    flex: 8;
+    flex: 10;
+    overflow: auto;
 }
 
 #showRecentRecord {
@@ -393,6 +394,9 @@ export default {
     width: 100%;
     color: blue;
     background-color: gray;
+    height: 3vh;
+    font-size: 2vh;
+    text-align: center;
 }
 
 .btnBox {
