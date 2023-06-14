@@ -45,34 +45,32 @@ export default {
             } else {
                 amount = this.selectedAmount;
             }
-
             if (amount <= 0)
                 alert('取款数额需大于0')
             else {
-                const data = {
-                    id: this.$store.state.currentUser.id,
-                    amount: amount
+                const isConfirmed = confirm(`确认取款${amount}元?`)
+                if (isConfirmed) {
+                    const data = {
+                        id: this.$store.state.currentUser.id,
+                        amount: amount
+                    }
+                    axios.post('http://localhost:11001/Withdraw', data)
+                        .then(response => {
+                            console.log(response)
+                            alert(`取款${amount}元成功`)
+                            const newDayLimit = response.data.newDayLimit
+                            const newBalance = response.data.newBalance
+                            this.$store.dispatch('refreshBalance', newBalance)
+                            this.$store.dispatch('refreshDayLimit', newDayLimit)
+                        }).catch(error => {
+                            console.error('取款失败: ', error)
+                            alert(error.response.data.error)
+                        })
+                } else {
+                    alert('您已取消取款')
                 }
-                axios.post('http://localhost:11001/Withdraw', data)
-                    .then(response => {
-                        console.log(response)
-                        alert(`取款${amount}元成功`)
-                        const newDayLimit = response.data.newDayLimit
-                        const newBalance = response.data.newBalance
-                        this.$store.dispatch('refreshBalance', newBalance)
-                        this.$store.dispatch('refreshDayLimit', newDayLimit)
-                    }).catch(error => {
-                        console.error('取款失败: ', error)
-                        alert(error.response.data.error)
-                    })
             }
-
-            // 取款操作完成后，可以关闭弹窗或执行其他操作
-            this.closeWithdrawPopup();
         },
-        closeWithdrawPopup() {
-            this.$emit('close');
-        }
     }
 };
 </script>

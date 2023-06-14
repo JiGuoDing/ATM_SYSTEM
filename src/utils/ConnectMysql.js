@@ -126,7 +126,7 @@ app.post('/addUser', (req, res) => {
                                     res.status(500).json({ error: '数据库添加账户失败，您忘记填写某些必须的数据或者数据不合法' })
                                 } else { // 创建账户成功
                                     console.log('data inserted successfully', result)
-                                    res.status(200).json({ message: '账户创建成功', result })
+                                    res.status(200).json({ message: '账户创建成功，该操作已被记录', result })
                                 }
                             })
                         }
@@ -175,7 +175,7 @@ app.post('/Deposit', (req, res) => {
                 } else {
                     console.log('存款及操作记录成功')
                     console.log(result)
-                    res.status(200).json({ message: '存款及操作记录成功' })
+                    res.status(200).json({ message: '存款成功，该操作已被记录' })
                 }
             })
         }
@@ -229,7 +229,7 @@ app.post('/Withdraw', (req, res) => {
                                             } else {
                                                 console.log(result)
                                                 console.log('取款及更新日上限及添加记录成功')
-                                                res.status(200).json({ message: '取款成功', newDayLimit: newDayLimit, newBalance: newBalance })
+                                                res.status(200).json({ message: '取款成功，该操作已被记录', newDayLimit: newDayLimit, newBalance: newBalance })
                                             }
                                         })
                                     }
@@ -357,7 +357,7 @@ app.post('/Transfer', (req, res) => {
                                                                 const newDayLimit = day_limit - amount
                                                                 console.log('更新余额: ', newBalance)
                                                                 console.log('更新日上限: ', newDayLimit)
-                                                                res.status(200).json({ message: '转账成功', newBalance: newBalance, newDayLimit: newDayLimit })
+                                                                res.status(200).json({ message: '转账成功，该操作已被记录', newBalance: newBalance, newDayLimit: newDayLimit })
                                                             }
                                                         })
                                                     }
@@ -426,49 +426,66 @@ app.post('/UpdateUser', (req, res) => {
     const op_id = userData.op_id
     delete userData.op_id
     console.log(userData)
-    const checkExistence = 'select * from account where id = ?'
-    pool.query(checkExistence, [userData.id], (error, result) => {
-        if (error) {
-            // 数据库查询失败
-            console.error('数据库查询错误: ', error)
-            res.status(500).json({ error: '数据库查询错误' })
+    if (userData.balance != '' && userData.balance < 0) {
+        console.error('余额不能为负!')
+        res.status(500).json({ error: '余额不能为负数' })
+    } else {
+        // 余额为正或未输入
+        if (userData.balance === '')
+            userData.balance = 0
+        // 检查电话号码格式
+        if (userData.phone_number != '' && userData.phone_number < 0) {
+            console.error('电话号码输入有误')
+            res.status(500).json({ error: '电话号码输入有误' })
         } else {
-            // 数据库查询成功
-            if (result.length <= 0) {
-                // 没有找到该条数据
-                console.error('该用户不存在')
-                res.status(404).json({ error: '该用户不存在' })
-            } else {
-                // 数据查询成功
-                console.log('已找到该用户记录，即将进行修改操作...')
-                const result0 = result[0]
-                if (result0.account_type === 'admin') {
-                    console.error('无法对管理员进行修改')
-                    res.status(500).json({ error: '无法对管理员进行修改' })
+            // 电话号码输入无误或者没有输入
+            if (userData.phone_number === '')
+                userData.phone_number = 0
+            const checkExistence = 'select * from account where id = ?'
+            pool.query(checkExistence, [userData.id], (error, result) => {
+                if (error) {
+                    // 数据库查询失败
+                    console.error('数据库查询错误: ', error)
+                    res.status(500).json({ error: '数据库查询错误' })
                 } else {
-                    const updateUser = 'update account set name = ?, nickname = ?, phone_number = ?, balance = ?, password = ?, email = ? where id = ?'
-                    pool.query(updateUser, [userData.name, userData.nickname, userData.phone_number, userData.balance, userData.password, userData.email, userData.id], (error) => {
-                        if (error) {
-                            console.error('修改数据库记录出错: ', error)
-                            res.status(500).json({ error: '向数据库修改数据出错' })
+                    // 数据库查询成功
+                    if (result.length <= 0) {
+                        // 没有找到该条数据
+                        console.error('该用户不存在')
+                        res.status(404).json({ error: '该用户不存在' })
+                    } else {
+                        // 数据查询成功
+                        console.log('已找到该用户记录，即将进行修改操作...')
+                        const result0 = result[0]
+                        if (result0.account_type === 'admin') {
+                            console.error('无法对管理员进行修改')
+                            res.status(500).json({ error: '无法对管理员进行修改' })
                         } else {
-                            console.log('修改数据成功')
-                            const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
-                            pool.query(addRcd, [op_id, userData.id, '修改账户数据'], (error) => {
+                            const updateUser = 'update account set name = ?, nickname = ?, phone_number = ?, balance = ?, password = ?, email = ? where id = ?'
+                            pool.query(updateUser, [userData.name, userData.nickname, userData.phone_number, userData.balance, userData.password, userData.email, userData.id], (error) => {
                                 if (error) {
-                                    console.error('操作记录出现错误: ', error)
-                                    res.status(500).json({ error: '操作记录出现错误' })
+                                    console.error('修改数据库记录出错: ', error)
+                                    res.status(500).json({ error: '向数据库修改数据出错' })
                                 } else {
-                                    console.log('修改账户信息操作记录成功')
-                                    res.status(200).json({ message: '修改账户信息成功' })
+                                    console.log('修改数据成功')
+                                    const addRcd = 'insert into op_rcd (op_user_id, aim_user_id, op_type) values(?, ?, ?)'
+                                    pool.query(addRcd, [op_id, userData.id, '修改账户数据'], (error) => {
+                                        if (error) {
+                                            console.error('操作记录出现错误: ', error)
+                                            res.status(500).json({ error: '操作记录出现错误' })
+                                        } else {
+                                            console.log('修改账户信息操作记录成功')
+                                            res.status(200).json({ message: '修改账户信息成功，该操作已被记录' })
+                                        }
+                                    })
                                 }
                             })
                         }
-                    })
+                    }
                 }
-            }
+            })
         }
-    })
+    }
 })
 
 // 查询用户信息
@@ -502,7 +519,7 @@ app.post('/QueryUser', (req, res) => {
                         // 查询任务成功
                         console.log('用户信息: ', result0)
                         console.log('查询账户成功，操作已被记录')
-                        res.status(200).json({ message: '账户查询完成', UserData: result0 })
+                        res.status(200).json({ message: '账户查询完成，该操作已被记录', UserData: result0 })
                     }
                 })
             }
@@ -557,7 +574,7 @@ app.post('/DropUser', (req, res) => {
                                     } else {
                                         // 记录操作成功
                                         console.log('删除用户成功，操作已被记录')
-                                        res.status(200).json({ message: '删除用户成功，操作已被记录' })
+                                        res.status(200).json({ message: '删除用户成功，该操作已被记录' })
                                     }
                                 })
                             }
@@ -589,7 +606,7 @@ app.post('/RefreshDayLimit', (req, res) => {
                 } else {
                     console.log('重置日额度操作已记录成功')
                     console.log('重置日额度完成')
-                    res.status(200).json({ message: '重置完成' })
+                    res.status(200).json({ message: '重置完成，该操作已被记录' })
                 }
             })
         }

@@ -27,27 +27,33 @@ export default {
                 this.amount = 0
                 this.id = 0
             } else {
-                const data = {
-                    op_id: this.$store.state.currentUser.id,
-                    aim_id: this.id,
-                    amount: this.amount
+                if (this.amount < 0) {
+                    alert('转账数额不能为负!')
+                } else {
+                    if (this.id.length != 18) {
+                        alert('请输入正确的身份证号')
+                    } else {
+                        const data = {
+                            op_id: this.$store.state.currentUser.id,
+                            aim_id: this.id,
+                            amount: this.amount
+                        }
+                        console.log(data)
+                        axios.post('http://localhost:11001/Transfer', data)
+                            .then(response => {
+                                alert(`转账${this.amount}元成功!`)
+                                const newBalance = response.data.newBalance
+                                const newDayLimit = response.data.newDayLimit
+                                this.$store.dispatch('refreshBalance', newBalance)
+                                this.$store.dispatch('refreshDayLimit', newDayLimit)
+                            }).catch(error => {
+                                alert('转账失败!')
+                                console.error('error occurred: ', error)
+                            })
+                    }
                 }
-                console.log(data)
-
-                axios.post('http://localhost:11001/Transfer', data)
-                    .then(response => {
-                        alert(`转账${this.amount}元成功!`)
-                        const newBalance = response.data.newBalance
-                        const newDayLimit = response.data.newDayLimit
-                        this.$store.dispatch('refreshBalance', newBalance)
-                        this.$store.dispatch('refreshDayLimit', newDayLimit)
-                    }).catch(error => {
-                        alert('转账失败!')
-                        console.error('error occurred: ', error)
-                    })
             }
         },
-
         closeTransferPopup() {
             this.$emit('close');
         },

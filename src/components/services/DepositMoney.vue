@@ -22,30 +22,28 @@ export default {
                 alert('存款数额需大于0元');
                 return;
             } else {
-                const data = {
-                    id: this.$store.state.currentUser.id,
-                    amount: this.amount,
+                const isConfirmed = confirm(`确认存款${this.amount}元?`)
+                if (isConfirmed) {
+                    // 确认取款
+                    const data = {
+                        id: this.$store.state.currentUser.id,
+                        amount: this.amount,
+                    }
+                    console.log(data)
+                    axios.post('http://localhost:11001/Deposit', data)
+                        .then((response) => {
+                            // 存款成功且操作被记录
+                            alert(response.data.message)
+                            const newBalance = this.$store.state.currentUser.balance + this.amount
+                            this.$store.dispatch('refreshBalance', newBalance)
+                        }).catch(error => {
+                            console.error('存款失败', error)
+                        })
+                } else {
+                    // 取消取款
+                    alert('您已取消存款')
                 }
-                console.log(data)
-                axios.post('http://localhost:11001/Deposit', data)
-                    .then((response) => {
-                        // 存款成功且操作被记录
-                        alert(response.data.message)
-                        const newBalance = this.$store.state.currentUser.balance + this.amount
-                        this.$store.dispatch('refreshBalance', newBalance)
-                    }).catch(error => {
-                        console.error('存款失败', error)
-                    })
             }
-            // 在这里执行存款操作，可以将存款金额发送给后端进行处理
-
-            // 存款操作完成后，可以关闭弹窗或执行其他操作
-            this.closeDepositPopup();
-        },
-        closeDepositPopup() {
-            // 在这里关闭存款弹窗，你可以使用 v-if/v-show 控制弹窗的显示与隐藏
-            // 或者通过事件通知父组件关闭弹窗
-            this.$emit('close');
         },
     },
 };
