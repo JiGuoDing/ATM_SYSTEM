@@ -586,6 +586,7 @@ app.post('/DropUser', (req, res) => {
     })
 })
 
+// 刷新日取款限额
 app.post('/RefreshDayLimit', (req, res) => {
     const data = req.body
     const op_id = data.op_id
@@ -613,6 +614,19 @@ app.post('/RefreshDayLimit', (req, res) => {
     })
 })
 
+// 获取所有操作记录
+app.post('/FetchRecords', (req, res) => {
+    const fetchRecords = 'select * from op_rcd'
+    pool.query(fetchRecords, [], (error, result) => {
+        if (error) {
+            console.error('从数据库获取操作记录失败', error)
+            res.status(500).json({ error: '从数据库获取操作记录失败' })
+        } else {
+            console.log('从数据库获取操作记录成功')
+            res.status(200).json({ message: '从数据库获取操作记录成功', data: result })
+        }
+    })
+})
 
 // 释放数据库连接
 app.get('/releaseConnexion', () => {

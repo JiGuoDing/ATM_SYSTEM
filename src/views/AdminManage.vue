@@ -51,6 +51,10 @@
                 显示最近的操作记录
             </button>
 
+            <component :is=this.recordsComponent class="recordsComponent">
+
+            </component>
+
             <button id="refreshDayLimit" class="btn" @click="refreshDayLimit">
                 <p>
                     刷新所有账户日上限
@@ -113,10 +117,10 @@
 
 <script>
 import axios from 'axios';
-
+import RecordsComponent from '@/components/RecordsComponent.vue'
 export default {
     name: 'AdminManage',
-    components: {},
+    components: { RecordsComponent },
     data() {
         return {
             id_l: null,
@@ -138,10 +142,14 @@ export default {
             account_type: null,
 
             // 用来判断修改按钮是否显现
-            updatePermission: false
+            updatePermission: false,
+
+            // 显示记录的组件
+            recordsComponent: RecordsComponent
         }
     },
     computed: {
+
         computeUser_l() {
             const user_l = {
                 op_id: this.$store.state.currentUser.id,
@@ -358,5 +366,10 @@ export default {
 
 #refreshDayLimit {
     margin-top: 20px;
+}
+
+.recordsComponent {
+    overflow: auto;
+    height: 400px;
 }
 </style>

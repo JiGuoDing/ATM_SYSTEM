@@ -26,9 +26,7 @@ export default {
         }
 
     },
-    // beforeUnmount() {
-    //     this.releaseConnxion()
-    // },
+
     methods: {
         lgn() {
             //向数据库查询用户输入的信息
