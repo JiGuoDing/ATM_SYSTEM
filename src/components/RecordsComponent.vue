@@ -53,7 +53,7 @@ export default {
 
 <style>
 .myTr td {
-    padding: 0 10px;
+    padding: 0 15px;
     /*
     第一个参数表示上下内边距
     第二个参数标识左右内边距

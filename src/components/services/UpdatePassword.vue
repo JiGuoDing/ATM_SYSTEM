@@ -7,7 +7,7 @@
                 <input v-model="currentPassword" type="password" id="current-password" placeholder="请输入当前密码" />
             </div>
             <div class="container">
-                <label for="new-password">新密码:</label>
+                <label for="new-password">新的密码:</label>
                 <input v-model="newPassword" type="password" id="new-password" placeholder="请输入新密码" />
             </div>
             <div class="container">
@@ -99,7 +99,7 @@ export default {
 
 .inputContainer {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
 }

@@ -7,7 +7,7 @@
                     <th>用户名</th>
                     <th> 余额 </th>
                     <th> 邮箱 </th>
-                    <th>日上限(单位:元)</th>
+                    <th>当日额度(单位:元)</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,7 +53,7 @@ export default {
 
 <style>
 .myTr td {
-    padding: 0 10px;
+    padding: 0 15px;
     /*
     第一个参数表示上下内边距
     第二个参数标识左右内边距
@@ -61,6 +61,7 @@ export default {
     height: auto;
     width: auto;
     text-overflow: ellipsis;
+    font-size: 17px;
 }
 
 .myTr th {

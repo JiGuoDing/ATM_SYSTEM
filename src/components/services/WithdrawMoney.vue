@@ -135,5 +135,7 @@ export default {
     flex-direction: row;
     margin-top: 1vh;
     margin-bottom: 1vh;
+    justify-content: center;
+    align-items: center;
 }
 </style>

@@ -282,11 +282,13 @@ export default {
     width: 100%;
     height: 100%;
     flex-direction: row;
+    justify-content: space-around;
 }
 
 .adminPanel {
     flex: 1;
     height: 100%;
+    width: 30%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -336,13 +338,16 @@ export default {
 .inputContainer label {
     margin-right: 10px;
     min-width: 100px;
+    font-size: 20px;
 }
 
 .inputContainer input {
     padding: 5px;
+    height: 3vh;
     border: 1px solid #ccc;
     border-radius: 10px;
     flex-grow: 1;
+    font-size: 20px;
 }
 
 .btnBox {
@@ -368,6 +373,7 @@ export default {
     justify-content: center;
     border: solid 2px green;
     height: 80vh;
+    flex: 8;
 }
 
 #showRecentRecord {
