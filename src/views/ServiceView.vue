@@ -65,6 +65,7 @@ export default {
 #ServiceBox {
     display: flex;
     height: 100vh;
+    overflow: auto;
 }
 
 .ItemBox {
@@ -82,22 +83,22 @@ export default {
     height: 200px;
     margin: 20px;
     padding: 20px;
-    background-color: #f2f2f2;
-    border-radius: 8px;
+    border-radius: 100px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    background-color: yellowgreen;
 }
 
 .serviceItem:hover {
-    background-color: #e0e0e0;
+    background-color: green;
 }
 
 .serviceItem h2 {
-    font-size: 18px;
+    font-size: 30px;
     font-weight: bold;
     color: #333;
     text-align: center;
@@ -106,6 +107,9 @@ export default {
 .serviceComponent {
     flex: 7;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     overflow: auto;
 }
 </style>

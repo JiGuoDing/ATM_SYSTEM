@@ -7,7 +7,7 @@
                     <th>用户名</th>
                     <th> 余额 </th>
                     <th> 邮箱 </th>
-                    <th>日上限</th>
+                    <th>日上限(单位:元)</th>
                 </tr>
             </thead>
             <tbody>

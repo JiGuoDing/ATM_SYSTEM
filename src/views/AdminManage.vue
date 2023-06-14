@@ -4,65 +4,47 @@
             <div class="adminHead">
                 添加用户
             </div>
-
             <div class="adminBody">
                 <div class="inputContainer">
                     <label for="id_l">身份证号:</label>
                     <input v-model="id_l" type="text" id="id_l" placeholder="请输入身份证号" />
                 </div>
-
                 <div class="inputContainer">
                     <label for="name_l">姓名:</label>
                     <input v-model="name_l" type="text" id="name_l" placeholder="请输入姓名" />
                 </div>
-
                 <div class="inputContainer">
                     <label for="nickname_l">用户名:</label>
                     <input v-model="nickname_l" type="text" id="nickname_l" placeholder="请输入用户名(可选)" />
                 </div>
-
                 <div class="inputContainer">
                     <label for="phone_l">电话号码:</label>
                     <input v-model="phone_number_l" type="tel" id="phone_l" placeholder="请输入电话号码(可选)" />
                 </div>
-
                 <div class="inputContainer">
                     <label for="balance_l">余额:</label>
                     <input v-model="balance_l" type="number" id="balance_l" placeholder="请输入余额" />
                     <input class="account_type" type="text" placeholder="单位:元" readonly />
                 </div>
-
                 <div class="inputContainer">
                     <label for="password_l">密码:</label>
                     <input v-model="password_l" type="text" id="password_l" placeholder="请输入密码" />
                 </div>
-
                 <div class="inputContainer">
                     <label for="email_l">邮箱:</label>
                     <input v-model="email_l" type="email" id="email_l" placeholder="请输入邮箱(可选)" />
                 </div>
-
             </div>
             <button class="btn" @click="submit">提交</button>
         </div>
 
         <div id="extensionBox">
-            <button id="showRecentRecord" class="btn">
-                显示最近的操作记录
-            </button>
-
-            <component :is=this.recordsComponent class="dataComponent">
-
-            </component>
-
-            <component :is=this.usersComponent class="dataComponent">
-
-            </component>
-
-            <button id="refreshDayLimit" class="btn" @click="refreshDayLimit">
-                <p>
-                    刷新所有账户日上限
-                </p>
+            <p>所有操作记录</p>
+            <component :is=this.recordsComponent class="dataComponent"></component>
+            <p>所有用户信息</p>
+            <component :is=this.usersComponent class="dataComponent"></component>
+            <button id="refreshDayLimit" @click="refreshDayLimit">
+                重置所有账户日取款额度
             </button>
         </div>
 
@@ -113,7 +95,7 @@
             <div class="btnBox">
                 <button v-if="updatePermission" class="btn" @click="update">修改</button>
                 <button class="btn" @click="query">查询</button>
-                <button class="btn" @click="drop">删除</button>
+                <button class="btn" id="drop" @click="drop">删除</button>
             </div>
         </div>
     </div>
@@ -236,7 +218,7 @@ export default {
                     this.updatePermission = true
                 }).catch(error => {
                     console.error('查询账户信息失败: ', error.response.data.error)
-                    alert('查询账户信息失败')
+                    alert(error.response.data.error)
                 })
         },
 
@@ -255,19 +237,25 @@ export default {
         },
 
         refreshDayLimit() {
-            const userData = {
-                op_id: this.$store.state.currentUser.id
+            const isConfirmed = confirm('确认重置?')
+            if (isConfirmed) {
+                const userData = {
+                    op_id: this.$store.state.currentUser.id
+                }
+                axios.post('http://localhost:11001/RefreshDayLimit', userData)
+                    .then(response => {
+                        const message = response.data.message
+                        console.log('重置日额度成功')
+                        alert(message)
+                    }).catch(error => {
+                        const err = error.response.data.error
+                        console.error('重置日额度失败: ', error)
+                        alert(err)
+                    })
+            } else {
+                alert('您已取消重置')
             }
-            axios.post('http://localhost:11001/RefreshDayLimit', userData)
-                .then(response => {
-                    const message = response.data.message
-                    console.log('重置日额度成功')
-                    alert(message)
-                }).catch(error => {
-                    const err = error.response.data.error
-                    console.error('重置日额度失败: ', error)
-                    alert(err)
-                })
+
         },
     }
 }
@@ -292,7 +280,7 @@ export default {
 }
 
 .adminHead {
-    color: blue;
+    color: black;
     margin-bottom: 20px;
     font-size: 20px;
     font-family: 'Cascadia Code';
@@ -315,10 +303,11 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     margin-bottom: 20px;
-    border: solid 1px red;
-    width: 50vh;
+    width: 55vh;
+    height: 60vh;
+    border: solid 2px blue;
 }
 
 .inputContainer {
@@ -326,7 +315,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
-    width: 300px;
+    width: 30vh;
 }
 
 .inputContainer label {
@@ -337,7 +326,7 @@ export default {
 .inputContainer input {
     padding: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 10px;
     flex-grow: 1;
 }
 
@@ -346,10 +335,6 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-}
-
-.btnBox button {
-    margin-left: 30px;
 }
 
 .account_type {
@@ -366,6 +351,8 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: solid 2px green;
+    height: 100vh;
 }
 
 #showRecentRecord {
@@ -379,5 +366,60 @@ export default {
 .dataComponent {
     overflow: auto;
     height: 400px;
+}
+
+#extensionBox p {
+    width: 100%;
+    background-color: gray;
+}
+
+.btnBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 45vh;
+}
+
+.btn {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 10vh;
+    height: 5vh;
+    font-size: 20px;
+    margin-top: 2vh;
+}
+
+.btn:hover {
+    background-color: green;
+}
+
+#refreshDayLimit {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 12vh;
+    height: 7vh;
+    font-size: 20px;
+    margin-top: 2vh;
+}
+
+#refreshDayLimit:hover {
+    background-color: green;
+}
+
+#drop {
+    background-color: orange;
+}
+
+#drop:hover {
+    background-color: red;
 }
 </style>

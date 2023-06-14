@@ -4,24 +4,28 @@
         <h2>
             今日取款限额还剩:{{ this.$store.state.currentUser.day_limit }}元
         </h2>
-        <label for="withdraw-amount">取款金额:</label>
-        <div>
-            <input type="radio" id="option-500" value="500" v-model="selectedAmount">
-            <label for="option-500">500元</label>
-        </div>
-        <div>
-            <input type="radio" id="option-1000" value="1000" v-model="selectedAmount">
-            <label for="option-1000">1000元</label>
-        </div>
-        <div>
-            <input type="radio" id="option-1500" value="1500" v-model="selectedAmount">
-            <label for="option-1500">1500元</label>
-        </div>
-        <div>
-            <input type="radio" id="option-custom" value="custom" v-model="selectedAmount">
-            <label for="option-custom">其他金额</label>
+        <label for="inputContainer">取款金额:</label>
+        <div class="inputContainer">
+            <div class="container">
+                <input type="radio" id="option-500" value="500" v-model="selectedAmount">
+                <label for="option-500">500元</label>
+            </div>
+
+            <div class="container">
+                <input type="radio" id="option-1000" value="1000" v-model="selectedAmount">
+                <label for="option-1000">1000元</label>
+            </div>
+
+            <div class="container">
+                <input type="radio" id="option-1500" value="1500" v-model="selectedAmount">
+                <label for="option-1500">1500元</label>
+            </div>
+            <div class="container">
+                <input type="radio" id="option-custom" value="custom" v-model="selectedAmount">
+                <label for="option-custom">其他金额</label>
+            </div>
             <input v-if="selectedAmount === 'custom'" v-model.number="customAmount" type="number"
-                id="withdraw-custom-amount" placeholder="请输入取款金额">
+                id="withdraw-custom-amount" placeholder="请输入取款金额" />
         </div>
         <button @click="confirmWithdraw">确认</button>
     </div>
@@ -80,26 +84,25 @@ export default {
     padding: 10px;
     background-color: #f2f2f2;
     border-radius: 8px;
+    width: 70vh;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .withdraw-component h3 {
     margin-bottom: 10px;
+    font-size: 3vh;
+}
+
+.withdraw-component h2 {
+    color: green;
 }
 
 .withdraw-component label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.withdraw-component input[type="radio"] {
-    margin-right: 5px;
-}
-
-.withdraw-component input[type="number"] {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 5px;
+    font-size: 20px;
 }
 
 .withdraw-component button {
@@ -107,7 +110,30 @@ export default {
     background-color: #4caf50;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 15px;
     cursor: pointer;
+    margin-top: 1vh;
+    width: 10vh;
+    height: 5vh;
+    font-size: 20px;
+    text-align: center;
+}
+
+.withdraw-component button:hover {
+    background-color: green;
+}
+
+.inputContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
 }
 </style>

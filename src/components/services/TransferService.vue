@@ -1,10 +1,17 @@
 <template>
     <div class="transfer-component">
-        <h3>转账</h3>
-        <label for="transfer-amount">转账金额:</label>
-        <input v-model="amount" type="number" id="transfer-amount" placeholder="请输入转账金额" />
-        <label for="transfer-id">收款账号:</label>
-        <input v-model="id" type="text" id="transfer-id" placeholder="请输入收款账号" />
+        <div class="inputContainer">
+            <h3>转账</h3>
+            <div class="container">
+                <label for="transfer-amount">转账金额:</label>
+                <input v-model="amount" type="number" id="transfer-amount" placeholder="请输入转账金额" />
+            </div>
+            <div class="container">
+                <label for="transfer-id">收款账号:</label>
+                <input v-model="id" type="text" id="transfer-id" placeholder="请输入收款账号" />
+            </div>
+        </div>
+
         <button @click="confirmTransfer">确认</button>
     </div>
 </template>
@@ -30,26 +37,30 @@ export default {
                 if (this.amount < 0) {
                     alert('转账数额不能为负!')
                 } else {
-                    if (this.id.length != 18) {
-                        alert('请输入正确的身份证号')
+                    if (this.id === null) {
+                        alert('请输入对方的身份证号')
                     } else {
-                        const data = {
-                            op_id: this.$store.state.currentUser.id,
-                            aim_id: this.id,
-                            amount: this.amount
+                        if (this.id.length != 18) {
+                            alert('请输入正确的身份证号')
+                        } else {
+                            const data = {
+                                op_id: this.$store.state.currentUser.id,
+                                aim_id: this.id,
+                                amount: this.amount
+                            }
+                            console.log(data)
+                            axios.post('http://localhost:11001/Transfer', data)
+                                .then(response => {
+                                    alert(`转账${this.amount}元成功!`)
+                                    const newBalance = response.data.newBalance
+                                    const newDayLimit = response.data.newDayLimit
+                                    this.$store.dispatch('refreshBalance', newBalance)
+                                    this.$store.dispatch('refreshDayLimit', newDayLimit)
+                                }).catch(error => {
+                                    alert(error.response.data.error)
+                                    console.error('error occurred: ', error)
+                                })
                         }
-                        console.log(data)
-                        axios.post('http://localhost:11001/Transfer', data)
-                            .then(response => {
-                                alert(`转账${this.amount}元成功!`)
-                                const newBalance = response.data.newBalance
-                                const newDayLimit = response.data.newDayLimit
-                                this.$store.dispatch('refreshBalance', newBalance)
-                                this.$store.dispatch('refreshDayLimit', newDayLimit)
-                            }).catch(error => {
-                                alert('转账失败!')
-                                console.error('error occurred: ', error)
-                            })
                     }
                 }
             }
@@ -66,30 +77,57 @@ export default {
     padding: 10px;
     background-color: #f2f2f2;
     border-radius: 8px;
-}
-
-.transfer-component h3 {
-    margin-bottom: 10px;
-}
-
-.transfer-component label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.transfer-component input {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    width: 70vh;
+    height: 45vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .transfer-component button {
-    padding: 5px 10px;
+    padding: 8px 16px;
     background-color: #4caf50;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 15px;
     cursor: pointer;
+    width: 10vh;
+    height: 5vh;
+    font-size: 20px;
+    margin-top: 2vh;
+}
+
+.transfer-component button:hover {
+    background-color: green;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.inputContainer h3 {
+    margin-bottom: 10px;
+    font-size: 3vh;
+}
+
+.container {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+.container label {
+    font-size: 2vh;
+    margin-bottom: 2vh;
+}
+
+.container input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    height: 2.5vh;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
     <div class="balance-component">
-        <h3>余额查询</h3>
+        <h2>余额查询</h2>
         <p>您的余额是 {{ balance }} 元</p>
-        <button @click="refreshBalance">刷新余额</button>
+        <button @click="refreshBalance">刷新</button>
     </div>
 </template>
 
@@ -36,23 +36,35 @@ export default {
 
 <style scoped>
 .balance-component {
-    padding: 20px;
+    padding: 10px;
     background-color: #f2f2f2;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 70vh;
+    height: 45vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.balance-component h3 {
-    font-size: 20px;
+.balance-component h2 {
+    font-size: 30px;
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
 }
 
 .balance-component p {
-    font-size: 16px;
+    font-size: 26px;
     color: rebeccapurple;
     margin-bottom: 20px;
+    padding: 1vh 1vh;
+    border: solid 2px green;
+}
+
+.balance-component:hover {
+    background-color: antiquewhite;
 }
 
 .balance-component button {
@@ -60,11 +72,15 @@ export default {
     background-color: #4caf50;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 15px;
     cursor: pointer;
+    width: 10vh;
+    height: 5vh;
+    font-size: 20px;
+    margin-top: 2vh;
 }
 
 .balance-component button:hover {
-    background-color: #4caf50;
+    background-color: green;
 }
 </style>

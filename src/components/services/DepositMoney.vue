@@ -54,22 +54,32 @@ export default {
     padding: 10px;
     background-color: #f2f2f2;
     border-radius: 8px;
+    width: 70vh;
+    height: 45vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .deposit-component h3 {
-    margin-bottom: 10px;
+    font-size: 30px;
 }
 
 .deposit-component label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 2vh;
+    font-size: 25px;
 }
 
 .deposit-component input {
     padding: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 10px;
     margin-bottom: 10px;
+    width: 20vh;
+    height: 3vh;
+    font-size: 2vh;
 }
 
 .deposit-component button {
@@ -77,7 +87,15 @@ export default {
     background-color: #4caf50;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 15px;
+    font-size: 20px;
+    margin-top: 2vh;
+    width: 10vh;
+    height: 5vh;
     cursor: pointer;
+}
+
+.deposit-component button:hover {
+    background-color: green;
 }
 </style>
