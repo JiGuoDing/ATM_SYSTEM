@@ -1,15 +1,20 @@
 <template>
-    <div id="loginBox">
-        <div id="loginHead">
-            ATM系统
+    <div class="groundPage">
+        <div class="description">
+
         </div>
-        <div id="loginBody">
-            <input class="input" v-model="id" type="text" placeholder="请输入身份证号" />
-            <input class="input" v-model="password" type="password" placeholder="请输入密码" />
-        </div>
-        <div id="btn">
-            <button id="lgn" @click="lgn">登录</button>
-            <button id="sgu" @click="sgu">注册</button>
+        <div id="loginBox">
+            <div id="loginHead">
+                ATM系统
+            </div>
+            <div id="loginBody">
+                <input class="input" v-model="id" type="text" placeholder="请输入身份证号" />
+                <input class="input" v-model="password" type="password" placeholder="请输入密码" />
+            </div>
+            <div id="btn">
+                <button class="bt" @click="lgn">登录</button>
+                <button class="bt" @click="sgu">注册</button>
+            </div>
         </div>
     </div>
 </template>
@@ -67,43 +72,95 @@ export default {
 </script>
 
 <style>
+.groundPage {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.description {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(/home/jiguoding/CODE/vue_repository/project_2023_06_12/src/assets/bkgd1.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 80vh;
+}
+
 #loginBox {
     color: aqua;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    overflow: auto;
+    flex: 1;
+    background-image: url(/home/jiguoding/CODE/vue_repository/project_2023_06_12/src/assets/OIP.jpeg);
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 #loginHead {
-    color: blue;
+    color: whitesmoke;
     margin-bottom: 20px;
-    font-size: 30px;
+    font-size: 100px;
     font-family: Cascadia code;
+    width: 400px;
+    height: 200px;
 }
 
 #loginBody {
     color: brown;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50vh;
+    height: 30vh;
 }
 
 .input {
     color: cadetblue;
+    font-size: 2.5vh;
     margin-top: 20px;
+    width: 30vh;
+    height: 4vh;
 }
 
 #btn {
-    margin-top: 20px;
-    display: flex
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 14vh;
+    height: 6vh;
 }
 
-#lgn {
-    margin-right: 15px;
+.bt {
+    width: 6vh;
+    height: 4vh;
 }
 
-#sgu {
-    margin-left: 15px;
-}
+/*
+flex-direction：用于设置主轴的方向。默认值是 row，表示子元素在水平方向上从左到右排列，如果设置为 column，则表示子元素在垂直方向上从上到下排列。
+
+justify-content：用于设置子元素在主轴上的对齐方式。它控制子元素沿主轴的水平方向上的对齐方式。常见的取值包括：
+flex-start：子元素靠主轴起始位置对齐。
+flex-end：子元素靠主轴结束位置对齐。
+center：子元素在主轴上居中对齐。
+space-between：子元素平均分布在主轴上，首尾子元素分别靠近主轴的起始和结束位置。
+space-around：子元素平均分布在主轴上，子元素之间和首尾子元素与主轴的边距相等。
+
+align-items：用于设置子元素在交叉轴上的对齐方式。它控制子元素沿交叉轴的垂直方向上的对齐方式。常见的取值包括：
+flex-start：子元素靠交叉轴起始位置对齐。
+flex-end：子元素靠交叉轴结束位置对齐。
+center：子元素在交叉轴上居中对齐。
+baseline：子元素按照它们的基线对齐。
+stretch：子元素被拉伸以填充交叉轴的整个空间。
+
+*/
 </style>

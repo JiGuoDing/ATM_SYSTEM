@@ -3,20 +3,20 @@
         <table>
             <thead>
                 <tr class="myTr">
-                    <th>记录ID</th>
-                    <th>操作用户ID</th>
-                    <th> 目标用户ID </th>
-                    <th> 操作类型 </th>
-                    <th>操作金额(单位:元)</th>
+                    <th>用户ID</th>
+                    <th>用户名</th>
+                    <th> 余额 </th>
+                    <th> 邮箱 </th>
+                    <th>日上限</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="record in this.op_Records" :key="record.rcd_id" class="myTr">
-                    <td>{{ record.rcd_id }}</td>
-                    <td>{{ record.op_user_id }}</td>
-                    <td>{{ record.aim_user_id }}</td>
-                    <td>{{ record.op_type }}</td>
-                    <td>{{ record.op_amount }}</td>
+                <tr v-for="user in this.users" :key="user.id" class="myTr">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.balance }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.day_limit }}</td>
                 </tr>
             </tbody>
         </table>
@@ -26,24 +26,24 @@
 <script>
 import axios from 'axios';
 export default {
-    name: 'RecordsComponent',
+    name: 'UsersComponent',
     components: {},
     data() {
         return {
-            op_Records: [],
+            users: [],
         };
     },
     mounted() {
-        this.fetchRecords()
-        setInterval(this.fetchRecords, 2000)
+        this.fetchUsers()
+        setInterval(this.fetchUsers, 2000)
     },
     methods: {
-        fetchRecords() {
-            axios.post('http://localhost:11001/FetchRecords')
+        fetchUsers() {
+            axios.post('http://localhost:11001/FetchUsers')
                 .then(response => {
-                    this.op_Records = response.data.data
+                    this.users = response.data.data
                 }).catch(error => {
-                    console.error('获取操作记录失败: ', error)
+                    console.error('获取用户失败: ', error)
                     alert(error.response.data.error)
                 })
         },

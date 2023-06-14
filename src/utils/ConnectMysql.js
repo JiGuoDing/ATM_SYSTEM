@@ -623,7 +623,23 @@ app.post('/FetchRecords', (req, res) => {
             res.status(500).json({ error: '从数据库获取操作记录失败' })
         } else {
             console.log('从数据库获取操作记录成功')
+            console.log(result)
             res.status(200).json({ message: '从数据库获取操作记录成功', data: result })
+        }
+    })
+})
+
+// 获取所有账户
+app.post('/FetchUsers', (req, res) => {
+    const fetchUsers = 'select * from account'
+    pool.query(fetchUsers, [], (error, result) => {
+        if (error) {
+            console.error('从数据库获取用户失败', error)
+            res.status(500).json({ error: '从数据库获取用户失败' })
+        } else {
+            console.log('从数据库获取用户成功')
+            console.log(result)
+            res.status(200).json({ message: '从数据库获取用户成功', data: result })
         }
     })
 })

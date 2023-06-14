@@ -51,7 +51,11 @@
                 显示最近的操作记录
             </button>
 
-            <component :is=this.recordsComponent class="recordsComponent">
+            <component :is=this.recordsComponent class="dataComponent">
+
+            </component>
+
+            <component :is=this.usersComponent class="dataComponent">
 
             </component>
 
@@ -118,9 +122,10 @@
 <script>
 import axios from 'axios';
 import RecordsComponent from '@/components/RecordsComponent.vue'
+import UsersComponent from '@/components/UsersComponent.vue';
 export default {
     name: 'AdminManage',
-    components: { RecordsComponent },
+    components: { RecordsComponent, UsersComponent },
     data() {
         return {
             id_l: null,
@@ -145,7 +150,8 @@ export default {
             updatePermission: false,
 
             // 显示记录的组件
-            recordsComponent: RecordsComponent
+            recordsComponent: RecordsComponent,
+            usersComponent: UsersComponent
         }
     },
     computed: {
@@ -311,6 +317,8 @@ export default {
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
+    border: solid 1px red;
+    width: 50vh;
 }
 
 .inputContainer {
@@ -368,7 +376,7 @@ export default {
     margin-top: 20px;
 }
 
-.recordsComponent {
+.dataComponent {
     overflow: auto;
     height: 400px;
 }
