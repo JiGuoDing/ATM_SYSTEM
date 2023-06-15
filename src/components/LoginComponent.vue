@@ -1,8 +1,5 @@
 <template>
     <div class="groundPage">
-        <div class="description">
-
-        </div>
         <div id="loginBox">
             <div id="loginHead">
                 ATM系统
@@ -11,10 +8,7 @@
                 <input class="input" v-model="id" type="text" placeholder="请输入身份证号" />
                 <input class="input" v-model="password" type="password" placeholder="请输入密码" />
             </div>
-            <div id="btn">
-                <button class="bt" @click="lgn">登录</button>
-                <button class="bt" @click="sgu">注册</button>
-            </div>
+            <button class="bt" @click="lgn">登录</button>
         </div>
     </div>
 </template>
@@ -47,7 +41,7 @@ export default {
                     this.$store.dispatch('login', user)
                     console.log(user.account_type)
                     if (user.account_type === 'admin')
-                        this.$router.push('/AdminManage')
+                        this.$router.push('/InfoView')
                     else
                         this.$router.push('/ServiceView')
                 }).catch((error) => {
@@ -57,10 +51,6 @@ export default {
                     else if (error.response.data.error === '用户不存在')
                         alert('用户名不存在')
                 })
-        },
-
-        sgu() {
-            this.$router.push('/SignUp')
         },
 
         releaseConnxion() {
@@ -129,20 +119,22 @@ export default {
     margin-top: 20px;
     width: 30vh;
     height: 4vh;
+    border-radius: 8px;
+    border: solid 2px blueviolet;
 }
 
-#btn {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 14vh;
-    height: 6vh;
-}
+
 
 .bt {
-    width: 6vh;
-    height: 4vh;
+    width: 10vh;
+    height: 6vh;
+    font-size: 2vh;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bt:hover {
+    background-color: gold;
 }
 
 /*

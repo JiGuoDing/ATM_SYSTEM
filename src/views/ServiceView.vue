@@ -17,6 +17,11 @@
                 <h2>修改密码</h2>
             </div>
         </div>
+        <div class="btnDiv" id="backBtn">
+            <button class="btn" @click="back2Login">
+                返回登录界面
+            </button>
+        </div>
 
         <div class="serviceComponent">
             <!-- 使用动态组件根据选中的服务项渲染相应的组件 -->
@@ -56,6 +61,12 @@ export default {
                 default:
                     return null;
             }
+        },
+    },
+
+    methods: {
+        back2Login() {
+            this.$router.push('/')
         },
     },
 }
@@ -111,5 +122,10 @@ export default {
     justify-content: center;
     align-items: center;
     overflow: auto;
+}
+
+#backBtn {
+    margin-left: 2vh;
+    margin-right: 2vh;
 }
 </style>

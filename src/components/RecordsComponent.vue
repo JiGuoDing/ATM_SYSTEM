@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <table>
+    <div class="tableContainer">
+        <table class="RecordsTable">
             <thead>
                 <tr class="myTr">
                     <th>记录ID</th>
@@ -52,6 +52,17 @@ export default {
 </script>
 
 <style>
+.tableContainer {
+    height: 300px;
+    overflow: auto;
+    border: 2px solid rebeccapurple;
+    border-radius: 8px;
+}
+
+.RecordsTable {
+    border-collapse: collapse;
+}
+
 .myTr td {
     padding: 0 15px;
     /*

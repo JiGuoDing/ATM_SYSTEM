@@ -85,6 +85,10 @@ export default {
     align-items: center;
 }
 
+.transfer-component:hover {
+    background-color: antiquewhite;
+}
+
 .transfer-component button {
     padding: 8px 16px;
     background-color: #4caf50;
@@ -94,7 +98,7 @@ export default {
     cursor: pointer;
     width: 10vh;
     height: 5vh;
-    font-size: 20px;
+    font-size: 2vh;
     margin-top: 2vh;
 }
 

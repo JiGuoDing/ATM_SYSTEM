@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <table>
+    <div class="tableContainer">
+        <table class="UserTable">
             <thead>
                 <tr class="myTr">
                     <th>用户ID</th>
                     <th>用户名</th>
-                    <th> 余额 </th>
+                    <th> 余额(单位:元) </th>
                     <th> 邮箱 </th>
                     <th>当日额度(单位:元)</th>
                 </tr>
@@ -52,6 +52,17 @@ export default {
 </script>
 
 <style>
+.tableContainer {
+    height: 300px;
+    overflow: auto;
+    border: 2px solid rebeccapurple;
+    border-radius: 8px;
+}
+
+.UserTable {
+    border-collapse: collapse;
+}
+
 .myTr td {
     padding: 0 15px;
     /*
@@ -62,6 +73,7 @@ export default {
     width: auto;
     text-overflow: ellipsis;
     font-size: 17px;
+    border: solid 1px lightgrey;
 }
 
 .myTr th {

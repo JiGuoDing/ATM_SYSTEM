@@ -85,11 +85,15 @@ export default {
     background-color: #f2f2f2;
     border-radius: 8px;
     width: 70vh;
-    height: 50vh;
+    height: 65vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.withdraw-component:hover {
+    background-color: antiquewhite;
 }
 
 .withdraw-component h3 {
@@ -115,7 +119,7 @@ export default {
     margin-top: 1vh;
     width: 10vh;
     height: 5vh;
-    font-size: 20px;
+    font-size: 2vh;
     text-align: center;
 }
 
@@ -135,7 +139,10 @@ export default {
     flex-direction: row;
     margin-top: 1vh;
     margin-bottom: 1vh;
-    justify-content: center;
     align-items: center;
+}
+
+.container input[type="radio"] {
+    width: auto;
 }
 </style>

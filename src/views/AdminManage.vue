@@ -1,6 +1,10 @@
 <template>
     <div class="adminBox">
+        <div>
+            <button id="CheckAll" class="btn" @click="CheckAll">返回</button>
+        </div>
         <div id="addUserBox" class="adminPanel">
+
             <div class="adminHead">
                 添加用户
             </div>
@@ -24,7 +28,7 @@
                 <div class="inputContainer">
                     <label for="balance_l">余额:</label>
                     <input v-model="balance_l" type="number" id="balance_l" placeholder="请输入余额" />
-                    <input class="account_type" type="text" placeholder="单位:元" readonly />
+                    <!-- <input class="account_type" type="text" placeholder="单位:元" readonly /> -->
                 </div>
                 <div class="inputContainer">
                     <label for="password_l">密码:</label>
@@ -38,15 +42,7 @@
             <button class="btn" @click="submit">提交</button>
         </div>
 
-        <div id="extensionBox">
-            <p>所有操作记录</p>
-            <component :is=this.recordsComponent class="dataComponent"></component>
-            <p>所有用户信息</p>
-            <component :is=this.usersComponent class="dataComponent"></component>
-            <button id="refreshDayLimit" @click="refreshDayLimit">
-                重置所有账户日取款额度
-            </button>
-        </div>
+
 
         <div id="ManageUserBox" class="adminPanel">
             <div class="adminHead">
@@ -57,7 +53,7 @@
                 <div class="inputContainer">
                     <label for="id_r">身份证号:</label>
                     <input v-model="id_r" type="text" id="id_r" placeholder="请输入身份证号" />
-                    <input v-model="account_type" class="account_type" type="text" placeholder="账户身份" readonly />
+                    <input v-model="account_type" id="account_type" type="text" placeholder="账户身份" readonly />
                 </div>
 
                 <div class="inputContainer">
@@ -78,7 +74,7 @@
                 <div class="inputContainer">
                     <label for="balance_r">余额:</label>
                     <input v-model="balance_r" type="number" id="balance_r" placeholder="请输入余额" />
-                    <input class="account_type" type="text" placeholder="单位:元" readonly />
+                    <!-- <input class="account_type" type="text" placeholder="单位:元" readonly /> -->
                 </div>
 
                 <div class="inputContainer">
@@ -103,11 +99,9 @@
 
 <script>
 import axios from 'axios';
-import RecordsComponent from '@/components/RecordsComponent.vue'
-import UsersComponent from '@/components/UsersComponent.vue';
 export default {
     name: 'AdminManage',
-    components: { RecordsComponent, UsersComponent },
+    components: {},
     data() {
         return {
             id_l: null,
@@ -131,9 +125,6 @@ export default {
             // 用来判断修改按钮是否显现
             updatePermission: false,
 
-            // 显示记录的组件
-            recordsComponent: RecordsComponent,
-            usersComponent: UsersComponent
         }
     },
     computed: {
@@ -182,6 +173,10 @@ export default {
                         alert(error.response.data.error)
                     })
             }
+        },
+
+        CheckAll() {
+            this.$router.push('/InfoView')
         },
 
         update() {
@@ -248,29 +243,6 @@ export default {
                         alert(err)
                     })
             }
-
-        },
-
-        refreshDayLimit() {
-            const isConfirmed = confirm('确认重置?')
-            if (isConfirmed) {
-                const userData = {
-                    op_id: this.$store.state.currentUser.id
-                }
-                axios.post('http://localhost:11001/RefreshDayLimit', userData)
-                    .then(response => {
-                        const message = response.data.message
-                        console.log('重置日额度成功')
-                        alert(message)
-                    }).catch(error => {
-                        const err = error.response.data.error
-                        console.error('重置日额度失败: ', error)
-                        alert(err)
-                    })
-            } else {
-                alert('您已取消重置')
-            }
-
         },
     }
 }
@@ -293,7 +265,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 50px;
+    padding: 0px 20px;
 }
 
 .adminHead {
@@ -322,9 +294,10 @@ export default {
     align-items: center;
     justify-content: space-around;
     margin-bottom: 20px;
-    width: 55vh;
+    width: 100%;
     height: 60vh;
     border: solid 2px blue;
+    border-radius: 15px;
 }
 
 .inputContainer {
@@ -343,6 +316,7 @@ export default {
 
 .inputContainer input {
     padding: 5px;
+    width: 30vh;
     height: 3vh;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -357,24 +331,12 @@ export default {
     justify-content: center;
 }
 
-.account_type {
+#account_type {
     color: green;
     text-align: center;
     font-size: 10px;
     margin-left: 10px;
-    width: 50px;
-    height: 8px;
-}
-
-#extensionBox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: solid 2px green;
-    height: 80vh;
-    flex: 10;
-    overflow: auto;
+    width: 6vh;
 }
 
 #showRecentRecord {
@@ -388,15 +350,6 @@ export default {
 .dataComponent {
     overflow: auto;
     height: 400px;
-}
-
-#extensionBox p {
-    width: 100%;
-    color: blue;
-    background-color: gray;
-    height: 3vh;
-    font-size: 2vh;
-    text-align: center;
 }
 
 .btnBox {
@@ -424,28 +377,18 @@ export default {
     background-color: green;
 }
 
-#refreshDayLimit {
-    padding: 8px 16px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    width: 12vh;
-    height: 7vh;
-    font-size: 20px;
-    margin-top: 2vh;
-}
-
-#refreshDayLimit:hover {
-    background-color: green;
-}
-
 #drop {
     background-color: orange;
 }
 
 #drop:hover {
     background-color: red;
+}
+
+#CheckAll {
+    margin-left: 2vh;
+    font-size: 2vh;
+    margin-top: 10vh;
+
 }
 </style>

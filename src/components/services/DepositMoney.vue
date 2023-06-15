@@ -62,6 +62,10 @@ export default {
     align-items: center;
 }
 
+.deposit-component:hover {
+    background-color: antiquewhite;
+}
+
 .deposit-component h3 {
     font-size: 30px;
 }
@@ -88,7 +92,7 @@ export default {
     color: #fff;
     border: none;
     border-radius: 15px;
-    font-size: 20px;
+    font-size: 1.5vh;
     margin-top: 2vh;
     width: 10vh;
     height: 5vh;

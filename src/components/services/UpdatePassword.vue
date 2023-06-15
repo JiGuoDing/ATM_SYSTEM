@@ -75,6 +75,10 @@ export default {
     height: 45vh;
 }
 
+.update-password-component:hover {
+    background-color: antiquewhite;
+}
+
 .update-password-component h3 {
     font-size: 3vh;
 }
@@ -89,7 +93,7 @@ export default {
     cursor: pointer;
     width: 10vh;
     height: 5vh;
-    font-size: 20px;
+    font-size: 2vh;
     margin-top: 2vh;
 }
 

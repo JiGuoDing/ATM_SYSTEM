@@ -61,6 +61,7 @@ export default {
     margin-bottom: 20px;
     padding: 1vh 1vh;
     border: solid 2px green;
+    border-radius: 2vh;
 }
 
 .balance-component:hover {
@@ -76,7 +77,7 @@ export default {
     cursor: pointer;
     width: 10vh;
     height: 5vh;
-    font-size: 20px;
+    font-size: 2vh;
     margin-top: 2vh;
 }
 
