@@ -1,6 +1,7 @@
 <template>
     <div id="ServiceBox">
         <div class="ItemBox">
+            <p id="showHead" :style="{ backgroundColor: this.backGroundColor, color: this.font_color }">ATM</p>
             <div class="serviceItem" @click="selectedService = 'balance'">
                 <h2>余额查询</h2>
             </div>
@@ -39,9 +40,14 @@ import UpdatePasswordComponent from '@/components/services/UpdatePassword.vue'
 export default {
     name: 'ServiceView',
     components: {},
+    mounted() {
+        this.changeColor()
+    },
     data() {
         return {
             selectedService: null, // 存储选中的服务项
+            backGroundColor: 'lightpink',
+            font_color: 'aqua'
         }
     },
     computed: {
@@ -68,6 +74,19 @@ export default {
         back2Login() {
             this.$router.push('/')
         },
+
+        changeColor() {
+            setInterval(() => {
+                if (this.backGroundColor === 'lightpink')
+                    this.backGroundColor = 'aqua'
+                else
+                    this.backGroundColor = 'lightpink'
+                if (this.font_color === 'aqua')
+                    this.font_color = 'lightpink'
+                else
+                    this.font_color = 'aqua'
+            }, 100)
+        }
     },
 }
 </script>
@@ -77,6 +96,9 @@ export default {
     display: flex;
     height: 100vh;
     overflow: auto;
+    display: flex;
+    background-image: url('@/assets/ATM-Machine.jpg');
+    background-size: contain;
 }
 
 .ItemBox {
@@ -104,9 +126,23 @@ export default {
     background-color: yellowgreen;
 }
 
+#showHead {
+    padding: 10px 10px;
+    background-color: lightpink;
+    color: aqua;
+    border-radius: 10px;
+}
+
+#showHead:hover {
+    background-color: aqua;
+    color: lightpink;
+}
+
 .serviceItem:hover {
     background-color: green;
 }
+
+
 
 .serviceItem h2 {
     font-size: 30px;
@@ -122,6 +158,7 @@ export default {
     justify-content: center;
     align-items: center;
     overflow: auto;
+    opacity: 0.85;
 }
 
 #backBtn {

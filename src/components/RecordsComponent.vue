@@ -72,6 +72,7 @@ export default {
     height: auto;
     width: auto;
     text-overflow: ellipsis;
+    color: firebrick;
 }
 
 .myTr th {
@@ -83,5 +84,6 @@ export default {
     height: auto;
     width: auto;
     text-overflow: ellipsis;
+    color: blueviolet;
 }
 </style>

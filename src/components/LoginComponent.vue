@@ -1,14 +1,14 @@
 <template>
     <div class="groundPage">
         <div id="loginBox">
-            <div id="loginHead">
-                ATM系统
+            <div id="loginHead" :style="{ color: this.font_color }">
+                <h3>ATM系统</h3>
             </div>
             <div id="loginBody">
                 <input class="input" v-model="id" type="text" placeholder="请输入身份证号" />
                 <input class="input" v-model="password" type="password" placeholder="请输入密码" />
             </div>
-            <button class="bt" @click="lgn">登录</button>
+            <button class="bt" @click="lgn" @mouseenter="changeColor" @mouseleave="changeColor">登录</button>
         </div>
     </div>
 </template>
@@ -21,7 +21,8 @@ export default {
     data() {
         return {
             id: null,
-            password: null
+            password: null,
+            font_color: 'pink'
         }
     },
 
@@ -54,6 +55,13 @@ export default {
 
         releaseConnxion() {
             axios.post('http://localhost:11001/releaseConnexion')
+        },
+
+        changeColor() {
+            if (this.font_color === 'pink')
+                this.font_color = 'blue'
+            else
+                this.font_color = 'pink'
         }
 
     }
@@ -66,7 +74,7 @@ export default {
     flex-direction: row;
     justify-content: center;
     width: 100%;
-    height: 100%;
+    height: 100vh;
 }
 
 .description {
@@ -88,18 +96,24 @@ export default {
     align-items: center;
     overflow: auto;
     flex: 1;
-    background-image: url(/home/jiguoding/CODE/vue_repository/project_2023_06_12/src/assets/OIP.jpeg);
+    background-image: url('@/assets/ATM.jpg');
     background-size: cover;
     background-repeat: no-repeat;
 }
 
 #loginHead {
     color: whitesmoke;
-    margin-bottom: 20px;
-    font-size: 100px;
+    font-size: 10vh;
     font-family: Cascadia code;
-    width: 400px;
-    height: 200px;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#loginHead h3 {
+    margin-top: 0;
+    margin-bottom: 20vh;
 }
 
 #loginBody {

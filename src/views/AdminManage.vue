@@ -252,9 +252,11 @@ export default {
 .adminBox {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     flex-direction: row;
     justify-content: space-around;
+    background-image: url('@/assets/bkgd1.jpg');
+    background-size: contain;
 }
 
 .adminPanel {
