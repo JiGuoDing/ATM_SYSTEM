@@ -23,7 +23,6 @@ export default {
             id: null,
             password: null
         }
-
     },
 
     methods: {
