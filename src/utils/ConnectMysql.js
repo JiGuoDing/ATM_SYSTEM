@@ -26,6 +26,7 @@ pool.getConnection((err, connection) => {
     } else {
         // 连接成功
         console.log('connected to DB :)')
+        console.log('ATM系统启动成功')
         conn = connection
     }
 })
@@ -546,7 +547,7 @@ app.post('/DropUser', (req, res) => {
                 // 账户存在
                 const result0 = result[0]
                 if (result0.account_type === 'admin') {
-                    // 要删除的是管理员账户
+                    // 要删除的是管理员账户，提示无权删除
                     console.error('您不能删除管理员账户')
                     res.status(500).json({ error: '您不能删除管理员账户' })
                 } else {
@@ -586,7 +587,7 @@ app.post('/DropUser', (req, res) => {
     })
 })
 
-// 刷新日取款限额
+// 重置日取款限额
 app.post('/RefreshDayLimit', (req, res) => {
     const data = req.body
     const op_id = data.op_id
@@ -653,5 +654,6 @@ app.get('/releaseConnexion', () => {
 })
 
 app.listen(11001, () => {
+    console.log('ATM系统启动中...')
     console.log('mysql server is running on port 11001')
 })
