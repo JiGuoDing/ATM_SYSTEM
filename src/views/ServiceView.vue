@@ -23,7 +23,6 @@
                 返回登录界面
             </button>
         </div>
-
         <div class="serviceComponent">
             <!-- 使用动态组件根据选中的服务项渲染相应的组件 -->
             <component :is="selectedServiceComponent"></component>

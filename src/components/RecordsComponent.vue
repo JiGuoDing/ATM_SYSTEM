@@ -72,7 +72,7 @@ export default {
     height: auto;
     width: auto;
     text-overflow: ellipsis;
-    color: firebrick;
+    color: white;
 }
 
 .myTr th {

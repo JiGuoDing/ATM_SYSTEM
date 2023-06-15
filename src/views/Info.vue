@@ -78,6 +78,8 @@ export default {
     display: flex;
     flex-direction: column;
     margin-top: 0;
+    background-image: url('@/assets/Moonlit Asteroid.png');
+    background-size: cover;
 }
 
 .InfoBox {
