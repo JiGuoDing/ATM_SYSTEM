@@ -334,7 +334,7 @@ export default {
 }
 
 #account_type {
-    color: green;
+    color: darkblue;
     text-align: center;
     font-size: 10px;
     margin-left: 10px;

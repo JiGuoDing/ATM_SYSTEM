@@ -61,6 +61,7 @@ export default {
 
 .RecordsTable {
     border-collapse: collapse;
+    width: 125vh;
 }
 
 .myTr td {
